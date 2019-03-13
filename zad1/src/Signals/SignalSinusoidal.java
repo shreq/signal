@@ -18,8 +18,8 @@ public class SignalSinusoidal extends Signal {
 
     @Override
     public Map<Float, Float> generate(float fs) {
-        Map<Float, Float> map = new HashMap<>();
+        Map<Float, Float> chart = new HashMap<>();
 
-        return map;
+        return chart;
     }
 }

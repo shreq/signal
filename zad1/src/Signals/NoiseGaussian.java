@@ -1,5 +1,7 @@
 package Signals;
 
+import CRandom.Random;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +18,14 @@ public class NoiseGaussian extends Signal {
 
     @Override
     public Map<Float, Float> generate(float fs) {
-        Map<Float, Float> map = new HashMap<>();
+        Map<Float, Float> chart = new HashMap<>();
 
-        return map;
+        float tx= t1+d;
+        float Ts = 1/fs;
+        for(float t=t1; t<tx; t+=Ts) {
+
+        }
+
+        return chart;
     }
 }
