@@ -1,44 +1,41 @@
 package Charts;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.TextTitle;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.ApplicationFrame;
 
-public class Drawer {
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-    public void draw(HashMap<Float, Float> map) {
-        XYSeries series = new XYSeries("");
+public class Drawer extends ApplicationFrame {
+
+    public Drawer(String appTitle, String chartTitle, HashMap<Double, Double> map) {
+        super(appTitle);
+        JFreeChart chart = ChartFactory.createLineChart(
+                chartTitle, "time", "A",
+                createDataset(map),
+                PlotOrientation.VERTICAL,
+                true, true, false
+        );
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        setContentPane(chartPanel);
+    }
+
+    private DefaultCategoryDataset createDataset(HashMap<Double, Double> map) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         Iterator it = map.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            series.add((float)pair.getKey(), (float)pair.getValue());
-            it.remove();
+            dataset.addValue((double)pair.getValue(), "signal", pair.getKey().toString());
         }
 
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series);
-
-
-        JFreeChart chart = ChartFactory.createXYLineChart("a", "x", "y", dataset);
-        XYPlot plot = chart.getXYPlot();
+        return dataset;
     }
 }

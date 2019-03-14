@@ -17,8 +17,8 @@ public class SignalSinusoidalStraightenedOneHalf extends Signal {
     }
 
     @Override
-    public Map<Float, Float> generate(float fs) {
-        Map<Float, Float> chart = new HashMap<>();
+    public Map<Double, Double> generate(float fs) {
+        Map<Double, Double> chart = new HashMap<>();
 
         return chart;
     }

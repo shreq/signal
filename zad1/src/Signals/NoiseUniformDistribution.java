@@ -17,12 +17,12 @@ public class NoiseUniformDistribution extends Signal {
     }
 
     @Override
-    public Map<Float, Float> generate(float fs) {
-        Map<Float, Float> chart = new HashMap<>();
+    public Map<Double, Double> generate(float fs) {
+        Map<Double, Double> chart = new HashMap<>();
 
         float tx = t1+d;
         float Ts = 1/fs;
-        for(float t=t1; t<tx; t+=Ts) {
+        for(double t=t1; t<tx; t+=Ts) {
             chart.put(t, Random.random(-A, A));
         }
 

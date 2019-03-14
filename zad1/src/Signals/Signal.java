@@ -16,5 +16,5 @@ public abstract class Signal {
         this.A = A;
     }
 
-    public abstract Map<Float, Float> generate(float fs);
+    public abstract Map<Double, Double> generate(float fs);
 }
