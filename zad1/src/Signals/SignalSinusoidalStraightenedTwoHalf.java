@@ -1,16 +1,17 @@
 package Signals;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
-public class SignalSinusoidalStraightenedTwoHalf extends Signal {
+public class SignalSinusoidalStraightenedTwoHalf implements Signal {
 
+    public float A;     // amplitude
     public float t1;    // time start
     public float d;     // signal duration
     public float T;     // basic period
 
-    public SignalSinusoidalStraightenedTwoHalf(SignalType signalType, float A, float t1, float d, float T) {
-        super(signalType, A);
+    public SignalSinusoidalStraightenedTwoHalf(float A, float t1, float d, float T) {
+        this.A = A;
         this.t1 = t1;
         this.d = d;
         this.T = T;
@@ -18,7 +19,7 @@ public class SignalSinusoidalStraightenedTwoHalf extends Signal {
 
     @Override
     public Map<Double, Double> generate(float fs) {
-        Map<Double, Double> chart = new HashMap<>();
+        Map<Double, Double> chart = new TreeMap<>();
 
         return chart;
     }

@@ -1,19 +1,23 @@
 import Charts.Drawer;
+import Signals.NoiseGaussian;
 import Signals.NoiseUniformDistribution;
 import Signals.Signal;
-import Signals.SignalType;
+import Signals.SignalSinusoidal;
 import org.jfree.ui.RefineryUtilities;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Signal s = new NoiseUniformDistribution(SignalType.NoiseUniformDistribution, 3.3f, 0, 5);
-        HashMap<Double, Double> map = (HashMap<Double, Double>) s.generate(50);
+        Signal nud = new NoiseUniformDistribution(1, 0, 50);
+        Signal ng = new NoiseGaussian(0, 50);
+        Signal ss = new SignalSinusoidal(1, 0, 50, 3);
 
-        Drawer d = new Drawer("Chart", "NoiseUniformDistribution", map);
+        Map<Double, Double> map = ss.generate(60);
+
+        Drawer d = new Drawer("Chart", "Nananana", map);
         d.pack();
         RefineryUtilities.centerFrameOnScreen(d);
         d.setVisible(true);

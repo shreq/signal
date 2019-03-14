@@ -7,16 +7,15 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.ApplicationFrame;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class Drawer extends ApplicationFrame {
 
-    public Drawer(String appTitle, String chartTitle, HashMap<Double, Double> map) {
+    public Drawer(String appTitle, String chartTitle, Map<Double, Double> map) {
         super(appTitle);
         JFreeChart chart = ChartFactory.createLineChart(
-                chartTitle, "time", "A",
+                chartTitle, "t[s]", "A",
                 createDataset(map),
                 PlotOrientation.VERTICAL,
                 true, true, false
@@ -27,7 +26,7 @@ public class Drawer extends ApplicationFrame {
         setContentPane(chartPanel);
     }
 
-    private DefaultCategoryDataset createDataset(HashMap<Double, Double> map) {
+    private DefaultCategoryDataset createDataset(Map<Double, Double> map) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         Iterator it = map.entrySet().iterator();
