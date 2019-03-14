@@ -19,8 +19,15 @@ public class SignalSinusoidalStraightenedOneHalf implements Signal {
 
     @Override
     public Map<Double, Double> generate(float fs) {
-        Map<Double, Double> chart = new TreeMap<>();
+        Map<Double, Double> map = new TreeMap<>();
 
-        return chart;
+        float tx = t1 + d;
+        double Ts = 1 / fs;
+        double c = (2.0 * Math.PI) / T;
+        for (double t = t1; t < tx; t += Ts) {
+            map.put(t, 0.5 * A * (Math.sin(c * (t - t1)) + Math.abs(Math.sin(c * (t - t1)))));
+        }
+
+        return map;
     }
 }

@@ -21,8 +21,8 @@ public class SignalRectangularSymmetric implements Signal {
 
     @Override
     public Map<Double, Double> generate(float fs) {
-        Map<Double, Double> chart = new TreeMap<>();
+        Map<Double, Double> map = new TreeMap<>();
 
-        return chart;
+        return map;
     }
 }
