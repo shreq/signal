@@ -1,4 +1,4 @@
-package CRandom;
+package main.java.CRandom;
 
 import java.util.concurrent.ThreadLocalRandom;
 

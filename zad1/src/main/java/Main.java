@@ -1,5 +1,7 @@
-import Charts.Drawer;
-import Signals.*;
+package main.java;
+
+import main.java.Charts.Drawer;
+import main.java.Signals.*;
 import org.jfree.chart.ui.UIUtils;
 
 import java.util.Map;
@@ -18,7 +20,7 @@ public class Main {
         Signal st = new SignalTriangular(1, 0, 50, 10, 0.8);
         Signal su = new StepUnit(1, 0, 50, 30);
 
-        Map<Double, Double> map = su.generate();
+        Map<Double, Double> map = sssoh.generate();
 
         Drawer d = new Drawer("Chart", "Nananana", map);
         d.pack();

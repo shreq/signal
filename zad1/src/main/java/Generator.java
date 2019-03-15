@@ -1,4 +1,6 @@
-import Signals.Signal;
+package main.java;
+
+import main.java.Signals.Signal;
 
 import java.util.HashMap;
 import java.util.Map;
