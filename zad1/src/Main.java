@@ -1,6 +1,6 @@
 import Charts.Drawer;
 import Signals.*;
-import org.jfree.ui.RefineryUtilities;
+import org.jfree.chart.ui.UIUtils;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class Main {
 
         Drawer d = new Drawer("Chart", "Nananana", map);
         d.pack();
-        RefineryUtilities.centerFrameOnScreen(d);
+        UIUtils.centerFrameOnScreen(d);
         d.setVisible(true);
     }
 }
