@@ -8,7 +8,7 @@ public class StepUnit implements Signal {
     public float A;     // amplitude
     public float t1;    // time start
     public float d;     // signal duration
-    public float ts;    // ?
+    public float ts;    // time step
 
     public StepUnit(float A, float t1, float d, float ts) {
         this.A = A;

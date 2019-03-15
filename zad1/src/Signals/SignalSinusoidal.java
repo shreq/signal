@@ -22,6 +22,8 @@ public class SignalSinusoidal implements Signal {
         Map<Double, Double> map = new TreeMap<>();
 
         float tx = t1 + d;
+        fs = 500 / tx;
+
         double Ts = 1 / fs;
         double c = (2.0 * Math.PI) / T;
         for (double t = t1; t < tx; t += Ts) {

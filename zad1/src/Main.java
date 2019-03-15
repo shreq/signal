@@ -17,8 +17,9 @@ public class Main {
         Signal srs = new SignalRectangularSymmetric(1, 0, 50, 10, 0.7f);
         Signal st = new SignalTriangular(1, 0, 50, 10, 0.7f);
         Signal su = new StepUnit(1, 0, 50, 30);
+        Signal iu = new ImpulseUnit(1, 10, 2, 1, 30);
 
-        Map<Double, Double> map = su.generate(60);
+        Map<Double, Double> map = ss.generate(60);
 
         Drawer d = new Drawer("Chart", "Nananana", map);
         d.pack();
