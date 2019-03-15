@@ -19,8 +19,22 @@ public class StepUnit implements Signal {
 
     @Override
     public Map<Double, Double> generate(float fs) {
-        Map<Double, Double> chart = new TreeMap<>();
+        Map<Double, Double> map = new TreeMap<>();
 
-        return chart;
+        float tx = t1 + d;
+        double Ts = 1 / fs;
+        for (double t = t1; t < tx; t += Ts) {
+            if (t > ts) {
+                map.put(t, (double) A);
+            }
+            else if (t < ts) {
+                map.put(t, 0.0);
+            }
+            else {
+                map.put(t, 0.5);
+            }
+        }
+
+        return map;
     }
 }

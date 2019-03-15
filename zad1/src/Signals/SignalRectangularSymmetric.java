@@ -28,7 +28,8 @@ public class SignalRectangularSymmetric implements Signal {
         for (double t = t1; t < tx; t += Ts) {
             if (t % T < kw * T) {
                 map.put(t, (double) A);
-            } else {
+            }
+            else {
                 map.put(t, (double) -A);
             }
         }
