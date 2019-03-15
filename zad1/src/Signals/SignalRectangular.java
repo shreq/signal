@@ -25,11 +25,20 @@ public class SignalRectangular implements Signal {
 
         float tx = t1 + d;
         double Ts = 1 / fs;
-        for (double t = t1, k = Math.floor(t1); t < tx; t += Ts, k = Math.floor(t)) {
+        /*for (double t = t1, k = Math.floor(t1); t < tx; t += Ts, k = Math.floor(t)) {
             if (t >= k * T + t1 && t < kw * T + k * T + t1) {
                 map.put(t, (double) A);
             }
             else if (t >= kw * T - k * T + t1 && t < T + k * T + t1) {
+                map.put(t, 0.0);
+            }
+        }*/
+
+        for (double t = t1; t < tx; t += Ts) {
+            if (t % T < kw * T) {
+                map.put(t, (double) A);
+            }
+            else {
                 map.put(t, 0.0);
             }
         }

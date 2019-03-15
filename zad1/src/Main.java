@@ -13,8 +13,8 @@ public class Main {
         Signal ss = new SignalSinusoidal(1, 0, 50, 5);
         Signal sssoh = new SignalSinusoidalStraightenedOneHalf(1, 0, 50, 5);
         Signal sssth = new SignalSinusoidalStraightenedTwoHalf(1, 0, 50, 5);
-        Signal sr = new SignalRectangular(1, 0, 50, 1, 0.5f); // better check this class
-        Signal srs = new SignalRectangularSymmetric(1, 0, 50, 1, 0.5f); // same
+        Signal sr = new SignalRectangular(1, 0, 50, 10, 0.7f);
+        Signal srs = new SignalRectangularSymmetric(1, 0, 50, 10, 0.7f); // finish
 
         Map<Double, Double> map = sr.generate(60);
 
