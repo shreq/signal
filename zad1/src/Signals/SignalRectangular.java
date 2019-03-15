@@ -5,13 +5,13 @@ import java.util.TreeMap;
 
 public class SignalRectangular implements Signal {
 
-    public float A;     // amplitude
-    public float t1;    // time start
-    public float d;     // signal duration
-    public float T;     // basic period
-    public float kw;    // fill factor
+    public double A;     // amplitude
+    public double t1;    // time start
+    public double d;     // signal duration
+    public double T;     // basic period
+    public double kw;    // fill factor
 
-    public SignalRectangular(float A, float t1, float d, float T, float kw) {
+    public SignalRectangular(double A, double t1, double d, double T, double kw) {
         this.A = A;
         this.t1 = t1;
         this.d = d;
@@ -20,29 +20,20 @@ public class SignalRectangular implements Signal {
     }
 
     @Override
-    public Map<Double, Double> generate(float fs) {
+    public Map<Double, Double> generate(double fs) {
         Map<Double, Double> map = new TreeMap<>();
 
-        float tx = t1 + d;
+        double tx = t1 + d;
         double Ts = 1 / fs;
-        /*for (double t = t1, kw = Math.floor(t1); t < tx; t += Ts, kw = Math.floor(t)) {
-            if (t >= kw * T + t1 && t < kw * T + kw * T + t1) {
-                map.put(t, (double) A);
-            }
-            else if (t >= kw * T - kw * T + t1 && t < T + kw * T + t1) {
-                map.put(t, 0.0);
-            }
-        }*/
-
         for (double t = t1; t < tx; t += Ts) {
-            if (t % T < kw * T) {
-                map.put(t, (double) A);
-            }
-            else {
-                map.put(t, 0.0);
-            }
+            map.put(t, (t % T < kw * T) ? A : 0.0);
         }
 
         return map;
+    }
+
+    @Override
+    public Map<Double, Double> generate() {
+        return generate(SAMPLES / (t1 + d));
     }
 }

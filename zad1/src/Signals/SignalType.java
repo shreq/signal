@@ -28,7 +28,7 @@ public enum SignalType {
     }
 
     public static SignalType valueOf(int signalType) {
-        return (SignalType)map.get(signalType);
+        return (SignalType) map.get(signalType);
     }
 
     public int getValue() {

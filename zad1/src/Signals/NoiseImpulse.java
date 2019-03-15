@@ -5,13 +5,13 @@ import java.util.TreeMap;
 
 public class NoiseImpulse implements Signal {
 
-    public float A;     // amplitude
-    public float t1;    // time start
-    public float d;     // signal duration
-    public float f;     // ?
-    public float p;     // ?
+    public double A;     // amplitude
+    public double t1;    // time start
+    public double d;     // signal duration
+    public double f;     // ?
+    public double p;     // ?
 
-    public NoiseImpulse(float A, float t1, float d, float f, float p) {
+    public NoiseImpulse(double A, double t1, double d, double f, double p) {
         this.A = A;
         this.t1 = t1;
         this.d = d;
@@ -20,9 +20,14 @@ public class NoiseImpulse implements Signal {
     }
 
     @Override
-    public Map<Double, Double> generate(float fs) {
-        Map<Double, Double> chart = new TreeMap<>();
+    public Map<Double, Double> generate(double fs) {
+        Map<Double, Double> map = new TreeMap<>();
 
-        return chart;
+        return map;
+    }
+
+    @Override
+    public Map<Double, Double> generate() {
+        return null;
     }
 }

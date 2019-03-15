@@ -5,13 +5,13 @@ import java.util.TreeMap;
 
 public class ImpulseUnit implements Signal {
 
-    public float A;     // amplitude
-    public float ns;    // ?
-    public float n1;    // ?
-    public float l;     // ?
-    public float f;     // ?
+    public double A;     // amplitude
+    public double ns;    // ?
+    public double n1;    // ?
+    public double l;     // ?
+    public double f;     // ?
 
-    public ImpulseUnit(float A, float ns, float n1, float l, float f) {
+    public ImpulseUnit(double A, double ns, double n1, double l, double f) {
         this.A = A;
         this.ns = ns;
         this.n1 = n1;
@@ -20,9 +20,14 @@ public class ImpulseUnit implements Signal {
     }
 
     @Override
-    public Map<Double, Double> generate(float fs) {
-        Map<Double, Double> chart = new TreeMap<>();
+    public Map<Double, Double> generate(double fs) {
+        Map<Double, Double> map = new TreeMap<>();
 
-        return chart;
+        return map;
+    }
+
+    @Override
+    public Map<Double, Double> generate() {
+        return null;
     }
 }
