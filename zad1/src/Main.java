@@ -14,9 +14,9 @@ public class Main {
         Signal sssoh = new SignalSinusoidalStraightenedOneHalf(1, 0, 50, 5);
         Signal sssth = new SignalSinusoidalStraightenedTwoHalf(1, 0, 50, 5);
         Signal sr = new SignalRectangular(1, 0, 50, 10, 0.7f);
-        Signal srs = new SignalRectangularSymmetric(1, 0, 50, 10, 0.7f); // finish
+        Signal srs = new SignalRectangularSymmetric(1, 0, 50, 10, 0.7f);
 
-        Map<Double, Double> map = sr.generate(60);
+        Map<Double, Double> map = srs.generate(60);
 
         Drawer d = new Drawer("Chart", "Nananana", map);
         d.pack();
