@@ -19,10 +19,12 @@ public class Main {
         Signal srs = new SignalRectangularSymmetric(1.2, 0, 50, 12.3, 0.7);
         Signal st = new SignalTriangular(1, 0, 50, 10, 0.8);
         Signal su = new StepUnit(1, 0, 50, 30);
+        Signal ni = new NoiseImpulse(1, 0, 50, 1, 0.9);
 
-        Map<Double, Double> map = sssoh.generate();
+        Signal signal = ni;
+        Map<Double, Double> map = signal.generate();
 
-        Drawer d = new Drawer("Chart", "Nananana", map);
+        Drawer d = new Drawer("Chart", signal.getClass().getSimpleName(), map);
         d.pack();
         UIUtils.centerFrameOnScreen(d);
         d.setVisible(true);

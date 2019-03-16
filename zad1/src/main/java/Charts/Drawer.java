@@ -29,10 +29,9 @@ public class Drawer extends ApplicationFrame {
     private DefaultCategoryDataset createDataset(Map<Double, Double> map) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        Iterator it = map.entrySet().iterator();
-        while(it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            dataset.addValue((double)pair.getValue(), "signal", pair.getKey().toString());
+        for (Map.Entry<Double, Double> doubleDoubleEntry : map.entrySet()) {
+            Map.Entry pair = doubleDoubleEntry;
+            dataset.addValue((double) pair.getValue(), "signal", pair.getKey().toString());
         }
 
         return dataset;

@@ -4,8 +4,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Random {
 
+    private static java.util.Random r = new java.util.Random();
+
     public static double random(double min, double max) {
-        return ThreadLocalRandom.current().nextDouble(min, max);
+        if (min > max) {
+            double tmp = min;
+            min = max;
+            max = tmp;
+        }
+
+        //return ThreadLocalRandom.current().nextDouble(min, max);  // boundaries aren't inclusive
+        return r.nextDouble() * (max - min) + min;                  // are they here?
     }
 
     public static double randomGaussian() {

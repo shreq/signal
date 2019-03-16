@@ -6,10 +6,10 @@ import java.util.TreeMap;
 public class ImpulseUnit implements Signal {
 
     public double A;     // amplitude
-    public double ns;    // ?
-    public double n1;    // ?
+    public double ns;    // number of sample where step occurs
+    public double n1;    // number of first sample
     public double l;     // ?
-    public double f;     // ?
+    public double f;     // frequency
 
     public ImpulseUnit(double A, double ns, double n1, double l, double f) {
         this.A = A;
@@ -22,6 +22,8 @@ public class ImpulseUnit implements Signal {
     @Override
     public Map<Double, Double> generate(double fs) {
         Map<Double, Double> map = new TreeMap<>();
+
+
 
         return map;
     }
