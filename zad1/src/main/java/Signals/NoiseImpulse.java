@@ -1,6 +1,6 @@
-package main.java.Signals;
+package Signals;
 
-import main.java.CRandom.Random;
+import CRandom.Random;
 
 import java.util.Map;
 import java.util.TreeMap;

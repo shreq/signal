@@ -1,7 +1,5 @@
-package main.java;
-
-import main.java.Charts.Drawer;
-import main.java.Signals.*;
+import Charts.Drawer;
+import Signals.*;
 import org.jfree.chart.ui.UIUtils;
 
 import java.util.Map;

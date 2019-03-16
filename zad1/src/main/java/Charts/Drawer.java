@@ -1,4 +1,4 @@
-package main.java.Charts;
+package Charts;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -7,7 +7,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class Drawer extends ApplicationFrame {
