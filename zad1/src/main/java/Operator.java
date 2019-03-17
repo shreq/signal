@@ -10,6 +10,8 @@ public class Operator {
         for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
             Double d = result.get(e.getKey());
             result.put(e.getKey(), e.getValue() + (d == null ? 0 : d));
+
+            //if (d != null) result.put(e.getKey(), e.getValue() + d);
         }
 
         return result;

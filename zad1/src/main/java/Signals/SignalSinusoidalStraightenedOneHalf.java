@@ -40,7 +40,12 @@ public class SignalSinusoidalStraightenedOneHalf implements Signal {
     }
 
     @Override
+    public TreeMap<BigDecimal, Double> generate(double fs) {
+        return generate(new BigDecimal(fs));
+    }
+
+    @Override
     public TreeMap<BigDecimal, Double> generate() {
-        return generate(new BigDecimal(SAMPLES).divide(t1.add(d), SCALE, RoundingMode.CEILING));
+        return generate(new BigDecimal(SAMPLES).divide(d, SCALE, RoundingMode.CEILING));
     }
 }

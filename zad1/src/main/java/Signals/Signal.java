@@ -8,5 +8,6 @@ public interface Signal {
     int SCALE = 5;
 
     TreeMap<BigDecimal, Double> generate(BigDecimal fs);
+    TreeMap<BigDecimal, Double> generate(double fs);
     TreeMap<BigDecimal, Double> generate();
 }

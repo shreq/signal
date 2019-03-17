@@ -11,7 +11,7 @@ public class Main {
 
         Signal nud = new NoiseUniformDistribution(1, 0, 50);
         Signal ng = new NoiseGaussian(0, 50);
-        Signal ss = new SignalSinusoidal(1, 0, 50, 5);
+        Signal ss = new SignalSinusoidal(1, 0, 10, 5);
         Signal sssoh = new SignalSinusoidalStraightenedOneHalf(1, 0, 50, 5);
         Signal sssth = new SignalSinusoidalStraightenedTwoHalf(1, 0, 50, 5);
         Signal sr = new SignalRectangular(1.2, 0, 50, 12.3, 0.7);
@@ -20,15 +20,16 @@ public class Main {
         Signal su = new StepUnit(1, 0, 50, 30);
         Signal ni = new NoiseImpulse(1, 0, 50, 1, 0.9);
 
-        Signal signal = ss;
-        TreeMap<BigDecimal, Double> map = signal.generate();
+        Signal signal = st;
+        TreeMap<BigDecimal, Double> map1 = signal.generate();
 
         /**/
-        Signal s = new SignalSinusoidal(2, 25, 50, 5);
-        TreeMap<BigDecimal, Double> map2 = Operator.Addition(map, s.generate());
+        Signal signal2 = new SignalSinusoidal(2, 5, 10, 5);
+        TreeMap<BigDecimal, Double> map2 = signal2.generate();
+        TreeMap<BigDecimal, Double> map = Operator.Addition(map1, map2);
         /**/
 
-        DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map2);
+        DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map);
         d.pack();
         UIUtils.centerFrameOnScreen(d);
         d.setVisible(true);

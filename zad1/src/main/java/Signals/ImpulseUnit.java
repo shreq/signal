@@ -29,6 +29,11 @@ public class ImpulseUnit implements Signal {
     }
 
     @Override
+    public TreeMap<BigDecimal, Double> generate(double fs) {
+        return generate(new BigDecimal(fs));
+    }
+
+    @Override
     public TreeMap<BigDecimal, Double> generate() {
         return null;
     }
