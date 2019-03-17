@@ -9,7 +9,7 @@ public class Operator {
 
         for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
             Double d = result.get(e.getKey());
-            result.put(e.getKey(), e.getValue() + (d == null ? 0 : d));
+            result.put(e.getKey(), e.getValue() + (d == null ? 0.0 : d));
         }
 
         return result;
@@ -24,12 +24,12 @@ public class Operator {
 
         for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
             Double d = b.get(e.getKey());
-            result.put(e.getKey(), d == null ? 0 : e.getValue());
+            result.put(e.getKey(), d == null ? 0.0 : e.getValue());
         }
 
         for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
             Double d = result.get(e.getKey());
-            result.put(e.getKey(), d == null ? 0 : d * e.getValue());
+            result.put(e.getKey(), d == null ? 0.0 : d * e.getValue());
         }
 
         return result;
