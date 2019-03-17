@@ -1,6 +1,6 @@
 package Signals;
 
-import java.util.Map;
+import java.math.BigDecimal;
 import java.util.TreeMap;
 
 public class ImpulseUnit implements Signal {
@@ -20,8 +20,8 @@ public class ImpulseUnit implements Signal {
     }
 
     @Override
-    public Map<Double, Double> generate(double fs) {
-        Map<Double, Double> map = new TreeMap<>();
+    public TreeMap<BigDecimal, Double> generate(BigDecimal fs) {
+        TreeMap<BigDecimal, Double> map = new TreeMap<>();
 
 
 
@@ -29,7 +29,7 @@ public class ImpulseUnit implements Signal {
     }
 
     @Override
-    public Map<Double, Double> generate() {
+    public TreeMap<BigDecimal, Double> generate() {
         return null;
     }
 }

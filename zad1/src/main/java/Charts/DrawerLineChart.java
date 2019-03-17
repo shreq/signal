@@ -7,11 +7,12 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
-public class Drawer extends ApplicationFrame {
+public class DrawerLineChart extends ApplicationFrame {
 
-    public Drawer(String appTitle, String chartTitle, Map<Double, Double> map) {
+    public DrawerLineChart(String appTitle, String chartTitle, Map<BigDecimal, Double> map) {
         super(appTitle);
         JFreeChart chart = ChartFactory.createLineChart(
                 chartTitle, "t[s]", "A",
@@ -25,12 +26,12 @@ public class Drawer extends ApplicationFrame {
         setContentPane(chartPanel);
     }
 
-    private DefaultCategoryDataset createDataset(Map<Double, Double> map) {
+    private DefaultCategoryDataset createDataset(Map<BigDecimal, Double> map) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        for (Map.Entry<Double, Double> doubleDoubleEntry : map.entrySet()) {
-            Map.Entry pair = doubleDoubleEntry;
-            dataset.addValue((double) pair.getValue(), "signal", pair.getKey().toString());
+        for (Map.Entry<BigDecimal, Double> entry : map.entrySet()) {
+            Map.Entry pair = entry;
+            dataset.addValue(new BigDecimal(pair.getValue().toString()), "signal", pair.getKey().toString());
         }
 
         return dataset;

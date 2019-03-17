@@ -2,28 +2,35 @@ package Signals;
 
 import CRandom.Random;
 
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.TreeMap;
 
 public class NoiseUniformDistribution implements Signal {
 
-    public double A;     // amplitude
-    public double t1;    // time start
-    public double d;     // signal duration
+    public double A;        // amplitude
+    public BigDecimal t1;   // time start
+    public BigDecimal d;    // signal duration
 
-    public NoiseUniformDistribution(double A, double t1, double d) {
+    public NoiseUniformDistribution(double A, BigDecimal t1, BigDecimal d) {
         this.A = A;
         this.t1 = t1;
         this.d = d;
     }
 
-    @Override
-    public Map<Double, Double> generate(double fs) {
-        Map<Double, Double> map = new TreeMap<>();
+    public NoiseUniformDistribution(double A, double t1, double d) {
+        this.A = A;
+        this.t1 = new BigDecimal(t1);
+        this.d = new BigDecimal(d);
+    }
 
-        double tx = t1 + d;
-        double Ts = 1 / fs;
-        for (double t = t1; t < tx; t += Ts) {
+    @Override
+    public TreeMap<BigDecimal, Double> generate(BigDecimal fs) {
+        TreeMap<BigDecimal, Double> map = new TreeMap<>();
+
+        BigDecimal tx = t1.add(d);
+        BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
+        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
             map.put(t, Random.random(-A, A));
         }
 
@@ -31,7 +38,7 @@ public class NoiseUniformDistribution implements Signal {
     }
 
     @Override
-    public Map<Double, Double> generate() {
-        return generate(SAMPLES / (t1 + d));
+    public TreeMap<BigDecimal, Double> generate() {
+        return generate(new BigDecimal(SAMPLES).divide(t1.add(d), SCALE, RoundingMode.CEILING));
     }
 }

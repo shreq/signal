@@ -1,17 +1,18 @@
 package Signals;
 
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.TreeMap;
 
 public class SignalRectangular implements Signal {
 
-    public double A;     // amplitude
-    public double t1;    // time start
-    public double d;     // signal duration
-    public double T;     // basic period
-    public double kw;    // fill factor
+    public double A;        // amplitude
+    public BigDecimal t1;   // time start
+    public BigDecimal d;    // signal duration
+    public BigDecimal T;    // basic period
+    public double kw;       // fill factor
 
-    public SignalRectangular(double A, double t1, double d, double T, double kw) {
+    public SignalRectangular(double A, BigDecimal t1, BigDecimal d, BigDecimal T, double kw) {
         this.A = A;
         this.t1 = t1;
         this.d = d;
@@ -19,21 +20,29 @@ public class SignalRectangular implements Signal {
         this.kw = kw;
     }
 
-    @Override
-    public Map<Double, Double> generate(double fs) {
-        Map<Double, Double> map = new TreeMap<>();
+    public SignalRectangular(double A, double t1, double d, double T, double kw) {
+        this.A = A;
+        this.t1 = new BigDecimal(t1);
+        this.d = new BigDecimal(d);
+        this.T = new BigDecimal(T);
+        this.kw = kw;
+    }
 
-        double tx = t1 + d;
-        double Ts = 1 / fs;
-        for (double t = t1; t < tx; t += Ts) {
-            map.put(t, (t % T < kw * T) ? A : 0.0);
+    @Override
+    public TreeMap<BigDecimal, Double> generate(BigDecimal fs) {
+        TreeMap<BigDecimal, Double> map = new TreeMap<>();
+
+        BigDecimal tx = t1.add(d);
+        BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
+        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
+            map.put(t, (t.remainder(T).compareTo(T.multiply(new BigDecimal(kw))) < 0) ? A : 0.0);
         }
 
         return map;
     }
 
     @Override
-    public Map<Double, Double> generate() {
-        return generate(SAMPLES / (t1 + d));
+    public TreeMap<BigDecimal, Double> generate() {
+        return generate(new BigDecimal(SAMPLES).divide(t1.add(d), SCALE, RoundingMode.CEILING));
     }
 }

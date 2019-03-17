@@ -1,23 +1,17 @@
-import Charts.Drawer;
+import Charts.DrawerXYLineChart;
 import Signals.*;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import org.jfree.chart.ui.UIUtils;
 
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.TreeMap;
 
-public class Main extends Application {
+public class Main {
 
     public static void main(String[] args) {
 
-        //launch(args);
-
         Signal nud = new NoiseUniformDistribution(1, 0, 50);
         Signal ng = new NoiseGaussian(0, 50);
-        Signal ss = new SignalSinusoidal(1, 0, 0.005, 0.002);
+        Signal ss = new SignalSinusoidal(1, 0, 50, 5);
         Signal sssoh = new SignalSinusoidalStraightenedOneHalf(1, 0, 50, 5);
         Signal sssth = new SignalSinusoidalStraightenedTwoHalf(1, 0, 50, 5);
         Signal sr = new SignalRectangular(1.2, 0, 50, 12.3, 0.7);
@@ -26,20 +20,17 @@ public class Main extends Application {
         Signal su = new StepUnit(1, 0, 50, 30);
         Signal ni = new NoiseImpulse(1, 0, 50, 1, 0.9);
 
-        Signal signal = ni;
-        Map<Double, Double> map = signal.generate();
+        Signal signal = ss;
+        TreeMap<BigDecimal, Double> map = signal.generate();
 
-        Drawer d = new Drawer("Chart", signal.getClass().getSimpleName(), map);
+        /**/
+        Signal s = new SignalSinusoidal(2, 25, 50, 5);
+        TreeMap<BigDecimal, Double> map2 = Operator.Addition(map, s.generate());
+        /**/
+
+        DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map2);
         d.pack();
         UIUtils.centerFrameOnScreen(d);
         d.setVisible(true);
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
-        stage.setTitle("Hello World");
-        stage.setScene(new Scene(root, 300, 275));
-        stage.show();
     }
 }
