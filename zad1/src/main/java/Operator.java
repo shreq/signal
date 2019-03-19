@@ -2,6 +2,11 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.TreeMap;
 
+/*
+ * Maybe we should just pass Signals instead of containers and pick some matching sampling frequency for both?
+ * Otherwise - how to match time?
+ */
+
 public class Operator {
 
     public static TreeMap<BigDecimal, Double> Addition(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
@@ -44,8 +49,11 @@ public class Operator {
     }
 
     public static TreeMap<BigDecimal, Double> Division(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
-        // I believe there's no such thing between two signals
-        return null;
+        TreeMap<BigDecimal, Double> result = new TreeMap<>();
+
+        // TODO
+
+        return result;
     }
 
     public static TreeMap<BigDecimal, Double> Division(TreeMap<BigDecimal, Double> a, double divisor) {

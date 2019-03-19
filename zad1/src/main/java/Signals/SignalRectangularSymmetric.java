@@ -34,7 +34,7 @@ public class SignalRectangularSymmetric implements Signal {
 
         BigDecimal tx = t1.add(d);
         BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
-        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
+        for (BigDecimal t = t1; t.compareTo(tx) <= 0; t = t.add(Ts)) {
             map.put(t, ((t.remainder(T).compareTo(T.multiply(new BigDecimal(kw))) < 0) ? A : -A));
         }
 
@@ -48,6 +48,6 @@ public class SignalRectangularSymmetric implements Signal {
 
     @Override
     public TreeMap<BigDecimal, Double> generate() {
-        return generate(new BigDecimal(SAMPLES).divide(d, SCALE, RoundingMode.CEILING));
+        return generate(T.multiply(new BigDecimal(5)));
     }
 }

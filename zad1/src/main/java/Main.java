@@ -10,6 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
 
+        final int BINS = 20;
         Signal nud = new NoiseUniformDistribution(1, 0, 50);
         Signal ng = new NoiseGaussian(0, 50);
         Signal ss = new SignalSinusoidal(1, 0, 10, 2);
@@ -21,22 +22,25 @@ public class Main {
         Signal su = new StepUnit(1, 0, 50, 30);
         Signal ni = new NoiseImpulse(1, 0, 50, 1, 0.9);
 
-        Signal signal = sr;
+        Signal signal = ss;
         TreeMap<BigDecimal, Double> map1 = signal.generate();
 
         /**/
         Signal signal2 = srs;
         TreeMap<BigDecimal, Double> map2 = signal2.generate();
-        TreeMap<BigDecimal, Double> map = Operator.Multiplication(map1, map2);
+        TreeMap<BigDecimal, Double> map = Operator.Addition(map1, map2);
         /**/
 
-        DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map1);
+        DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map);
         d.pack();
         UIUtils.centerFrameOnScreen(d);
         d.setVisible(true);
 
-        Histogram e = new Histogram("Chart", "Histogram", Calculator.Trim((SignalRectangular) signal, map1), 20);
+        Histogram e = new Histogram("Chart", "Histogram", Calculator.Trim((SignalRectangularSymmetric) signal2, map2), BINS);
+        //Histogram e = new Histogram("Chart", "Histogram", map1, 20);
         e.pack();
         e.setVisible(true);
+
+        double asd = Calculator.Variance(Calculator.Trim((SignalSinusoidal) signal, map1));
     }
 }

@@ -27,7 +27,7 @@ public class NoiseGaussian implements Signal {
 
         BigDecimal tx = t1.add(d);
         BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
-        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
+        for (BigDecimal t = t1; t.compareTo(tx) <= 0; t = t.add(Ts)) {
             map.put(t, Random.randomGaussian());
         }
 

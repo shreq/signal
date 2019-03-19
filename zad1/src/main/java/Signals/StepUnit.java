@@ -31,7 +31,7 @@ public class StepUnit implements Signal {
 
         BigDecimal tx = t1.add(d);
         BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
-        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
+        for (BigDecimal t = t1; t.compareTo(tx) <= 0; t = t.add(Ts)) {
             if (t.compareTo(ts) > 0) {
                 map.put(t, A);
             }

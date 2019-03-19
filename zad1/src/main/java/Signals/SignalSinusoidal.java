@@ -32,7 +32,7 @@ public class SignalSinusoidal implements Signal {
         BigDecimal tx = t1.add(d);
         BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
         double c = (2.0 * Math.PI) / T.doubleValue();
-        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
+        for (BigDecimal t = t1; t.compareTo(tx) <= 0; t = t.add(Ts)) {
             map.put(t, A * Math.sin(c * (t.doubleValue() - t1.doubleValue())));
         }
 
@@ -46,6 +46,6 @@ public class SignalSinusoidal implements Signal {
 
     @Override
     public TreeMap<BigDecimal, Double> generate() {
-        return generate(new BigDecimal(SAMPLES).divide(d, SCALE, RoundingMode.CEILING));
+        return generate(T.multiply(new BigDecimal(5)));
     }
 }

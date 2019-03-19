@@ -36,7 +36,7 @@ public class SignalTriangular implements Signal {
         BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
         double c1 = A / (kw * T.doubleValue());
         double c2 = -A / (T.doubleValue() * (1 - kw));
-        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
+        for (BigDecimal t = t1; t.compareTo(tx) <= 0; t = t.add(Ts)) {
             if (t.remainder(T).compareTo(T.multiply(new BigDecimal(kw))) < 0) {
                 map.put(t, c1 * (t.remainder(T)).doubleValue());
             }
@@ -55,6 +55,6 @@ public class SignalTriangular implements Signal {
 
     @Override
     public TreeMap<BigDecimal, Double> generate() {
-        return generate(new BigDecimal(SAMPLES).divide(d, SCALE, RoundingMode.CEILING));
+        return generate(T.multiply(new BigDecimal(5)));
     }
 }
