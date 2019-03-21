@@ -12,6 +12,8 @@ public class NoiseUniformDistribution implements Signal {
     public BigDecimal t1;   // time start
     public BigDecimal d;    // signal duration
 
+    public  NoiseUniformDistribution(){}
+
     public NoiseUniformDistribution(double A, BigDecimal t1, BigDecimal d) {
         this.A = A;
         this.t1 = t1;
@@ -22,6 +24,13 @@ public class NoiseUniformDistribution implements Signal {
         this.A = A;
         this.t1 = new BigDecimal(t1);
         this.d = new BigDecimal(d);
+    }
+
+    @Override
+    public void setAllFields(double... params){
+        A = params[0];
+        t1 = new BigDecimal(params[1]);
+        d = new BigDecimal(params[2]);
     }
 
     @Override

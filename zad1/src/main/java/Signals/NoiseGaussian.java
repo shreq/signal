@@ -11,6 +11,8 @@ public class NoiseGaussian implements Signal {
     public BigDecimal t1;   // time start
     public BigDecimal d;    // signal duration
 
+    public NoiseGaussian(){}
+
     public NoiseGaussian(BigDecimal t1, BigDecimal d) {
         this.t1 = t1;
         this.d = d;
@@ -19,6 +21,12 @@ public class NoiseGaussian implements Signal {
     public NoiseGaussian(double t1, double d) {
         this.t1 = new BigDecimal(t1);
         this.d = new BigDecimal(d);
+    }
+
+    @Override
+    public void setAllFields(double... params){
+        t1 = new BigDecimal(params[0]);
+        d = new BigDecimal(params[1]);
     }
 
     @Override

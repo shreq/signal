@@ -14,6 +14,8 @@ public class NoiseImpulse implements Signal {
     public double f;        // frequency       // ? ? ?
     public double p;        // probability
 
+    public NoiseImpulse(){}
+
     public NoiseImpulse(double A, BigDecimal t1, BigDecimal d, double f, double p) {
         this.A = A;
         this.t1 = t1;
@@ -28,6 +30,15 @@ public class NoiseImpulse implements Signal {
         this.d = new BigDecimal(d);
         this.f = f;
         this.p = p;
+    }
+
+    @Override
+    public void setAllFields(double... params){
+        this.A = params[0];
+        this.t1 = new BigDecimal(params[1]);
+        this.d = new BigDecimal(params[2]);
+        this.f = params[3];
+        this.p = params[4];
     }
 
     @Override

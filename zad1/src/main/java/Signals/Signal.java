@@ -10,4 +10,6 @@ public interface Signal {
     TreeMap<BigDecimal, Double> generate(BigDecimal fs);
     TreeMap<BigDecimal, Double> generate(double fs);
     TreeMap<BigDecimal, Double> generate();
+
+    public void setAllFields(double... params);
 }

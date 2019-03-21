@@ -18,11 +18,21 @@ public class SignalSinusoidalStraightenedOneHalf implements Signal {
         this.T = T;
     }
 
+    public SignalSinusoidalStraightenedOneHalf(){}
+
     public SignalSinusoidalStraightenedOneHalf(double A, double t1, double d, double T) {
         this.A = A;
         this.t1 = new BigDecimal(t1);
         this.d = new BigDecimal(d);
         this.T = new BigDecimal(T);
+    }
+
+    @Override
+    public void setAllFields(double... params) {
+        this.A = params[0];
+        this.t1 = new BigDecimal(params[1]);
+        this.d = new BigDecimal(params[2]);
+        this.T = new BigDecimal(params[3]);
     }
 
     @Override

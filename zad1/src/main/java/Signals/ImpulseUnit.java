@@ -37,4 +37,13 @@ public class ImpulseUnit implements Signal {
     public TreeMap<BigDecimal, Double> generate() {
         return null;
     }
+
+    @Override
+    public void setAllFields(double... params) {
+        this.A = params[0];
+        this.ns = params[1];
+        this.n1 = params[2];
+        this.l = params[3];
+        this.f = params[4];
+    }
 }

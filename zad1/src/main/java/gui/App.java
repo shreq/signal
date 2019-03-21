@@ -9,8 +9,18 @@ import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.util.TreeMap;
+import java.util.Vector;
 
 public class App implements ItemListener {
+
+    private void draw(Signal signal){
+        TreeMap<BigDecimal, Double> map1 = signal.generate();
+        DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map1);
+        d.pack();
+        UIUtils.centerFrameOnScreen(d);
+        d.setVisible(true);
+    }
+
     private JPanel mainPanel;
 
     JPanel cards; //a panel that uses CardLayout
@@ -25,6 +35,37 @@ public class App implements ItemListener {
     final static String SIGNAL9 = "StepUnit";
     final static String SIGNAL10 = "NoiseImpulse";
 
+    private JPanel createCard(Class<? extends Signal> signalClass, String... names){
+        JPanel card = new JPanel();
+        JTextField[] fields = new JTextField[names.length];
+        for (int i = 0; i<names.length; i++) {
+            fields[i] = new JTextField(names[i], 4);
+            card.add(fields[i]);
+        }
+        JButton button = new JButton("Show");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double[] params = new double[names.length];
+                for(int i = 0; i<names.length; i++){
+                    params[i] = Double.parseDouble(fields[i].getText());
+                }
+                Signal signal = null;
+                try {
+                    signal = signalClass.newInstance();
+                } catch (InstantiationException e1) {
+                    e1.printStackTrace();
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                }
+                signal.setAllFields(params);
+                draw(signal);
+            }
+        });
+        card.add(button);
+        return card;
+    }
+
     public void addComponentToPane(Container pane) {
         //Put the JComboBox in a JPanel to get a nicer look.
         JPanel comboBoxPane = new JPanel(); //use FlowLayout
@@ -35,40 +76,44 @@ public class App implements ItemListener {
         cb.addItemListener(this);
         comboBoxPane.add(cb);
 
+        Vector<JPanel> cardsArray = new Vector<>();
         //Create the "cards".
         //NoiseUniformDistribution
-        JPanel card1 = new JPanel();
-        JTextField s1A = new JTextField("A", 4);
-        JTextField s1t1 = new JTextField("t1", 4);
-        JTextField s1d = new JTextField("d", 4);
-        JButton s1button = new JButton("Show");
-        s1button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Signal signal = new NoiseUniformDistribution(Double.parseDouble(s1A.getText()),
-                        Double.parseDouble(s1t1.getText()),
-                        Double.parseDouble(s1d.getText()));
-                TreeMap<BigDecimal, Double> map1 = signal.generate();
-                DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map1);
-                d.pack();
-                UIUtils.centerFrameOnScreen(d);
-                d.setVisible(true);
-            }
-        });
-        card1.add(s1A);
-        card1.add(s1t1);
-        card1.add(s1d);
-        card1.add(s1button);
-
+        cardsArray.add(
+                createCard(NoiseUniformDistribution.class, "A", "t1", "d"));
         //NoiseGaussian
-        JPanel card2 = new JPanel();
-        card2.add(new JTextField("TextField", 20));
+        cardsArray.add(
+                createCard(NoiseGaussian.class, "t1", "d"));
+        //SignalSinusoidal
+        cardsArray.add(
+                createCard(SignalSinusoidal.class, "A", "t1", "d", "T"));
+        //SignalSinusoidalStraightenedOneHalf
+        cardsArray.add(
+                createCard(SignalSinusoidalStraightenedOneHalf.class, "A", "t1", "d", "T"));
+        //SignalSinusoidalStraightenedTwoHalf
+        cardsArray.add(
+                createCard(SignalSinusoidalStraightenedTwoHalf.class, "A", "t1", "d", "T"));
+        //SignalRectangular
+        cardsArray.add(
+                createCard(SignalRectangular.class, "A", "t1", "d", "T", "kw"));
+        //SignalRectangularSymmetric
+        cardsArray.add(
+                createCard(SignalRectangularSymmetric.class, "A", "t1", "d", "T", "kw"));
+        //SignalTriangular
+        cardsArray.add(
+                createCard(SignalTriangular.class, "A", "t1", "d", "T", "kw"));
+        //StepUnit
+        cardsArray.add(
+                createCard(StepUnit.class, "A", "t1", "d", "ts"));
+        //NoiseImpulse
+        cardsArray.add(
+                createCard(NoiseImpulse.class, "A", "t1", "d", "f", "p"));
 
         //Create the panel that contains the "cards".
         cards = new JPanel(new CardLayout());
-        cards.add(card1, SIGNAL1);
-        cards.add(card2, SIGNAL2);
-
+        for(int i = 0; i<cardsArray.size(); i++){
+            cards.add(cardsArray.elementAt(i), comboBoxItems[i]);
+        }
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
     }

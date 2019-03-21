@@ -1,5 +1,6 @@
 package Signals;
 
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.TreeMap;
@@ -10,6 +11,8 @@ public class StepUnit implements Signal {
     public BigDecimal t1;   // time start
     public BigDecimal d;    // signal duration
     public BigDecimal ts;   // time step
+
+    public StepUnit(){}
 
     public StepUnit(double A, BigDecimal t1, BigDecimal d, BigDecimal ts) {
         this.A = A;
@@ -23,6 +26,14 @@ public class StepUnit implements Signal {
         this.t1 = new BigDecimal(t1);
         this.d = new BigDecimal(d);
         this.ts = new BigDecimal(ts);
+    }
+
+    @Override
+    public void setAllFields(double... params){
+        this.A = params[0];
+        this.t1 = new BigDecimal(params[1]);
+        this.d = new BigDecimal(params[2]);
+        this.ts = new BigDecimal(params[3]);
     }
 
     @Override

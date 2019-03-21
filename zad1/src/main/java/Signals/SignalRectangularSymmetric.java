@@ -12,6 +12,8 @@ public class SignalRectangularSymmetric implements Signal {
     public BigDecimal T;    // basic period
     public double kw;       // fill factor
 
+    public SignalRectangularSymmetric(){}
+
     public SignalRectangularSymmetric(double A, BigDecimal t1, BigDecimal d, BigDecimal T, double kw) {
         this.A = A;
         this.t1 = t1;
@@ -26,6 +28,15 @@ public class SignalRectangularSymmetric implements Signal {
         this.d = new BigDecimal(d);
         this.T = new BigDecimal(T);
         this.kw = kw;
+    }
+
+    @Override
+    public void setAllFields(double... params){
+        this.A = params[0];
+        this.t1 = new BigDecimal(params[1]);
+        this.d = new BigDecimal(params[2]);
+        this.T = new BigDecimal(params[3]);
+        this.kw = params[4];
     }
 
     @Override
