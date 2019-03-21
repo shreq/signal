@@ -1,3 +1,5 @@
+package Calculations;
+
 import Signals.*;
 
 import java.math.BigDecimal;

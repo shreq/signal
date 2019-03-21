@@ -1,3 +1,5 @@
+import Calculations.Calculator;
+import Calculations.Operator;
 import Charts.DrawerXYLineChart;
 import Charts.Histogram;
 import Signals.*;

@@ -13,16 +13,19 @@ import java.util.Map;
 
 public class Histogram extends ApplicationFrame {
 
+    public JFreeChart chart;
+    public ChartPanel chartPanel;
+
     public Histogram(String appTitle, String chartTitle, Map<BigDecimal, Double> map, int bins) {
         super(appTitle);
-        JFreeChart chart = ChartFactory.createHistogram(
+        chart = ChartFactory.createHistogram(
                 chartTitle, "value", "frequency",
                 createDataset(map, bins),
                 PlotOrientation.VERTICAL,
                 false, true, false
         );
 
-        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(640, 480));
         setContentPane(chartPanel);
     }

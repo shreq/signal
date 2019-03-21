@@ -14,16 +14,19 @@ import java.util.Map;
 
 public class DrawerXYLineChart extends ApplicationFrame {
 
+    public JFreeChart chart;
+    public ChartPanel chartPanel;
+
     public DrawerXYLineChart(String appTitle, String chartTitle, Map<BigDecimal, Double> map) {
         super(appTitle);
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        chart = ChartFactory.createXYLineChart(
                 chartTitle, "t[s]", "A",
                 createDataset(map),
                 PlotOrientation.VERTICAL,
                 true, true, false
         );
 
-        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(chartPanel);
     }
