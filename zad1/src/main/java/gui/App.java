@@ -1,8 +1,14 @@
 package gui;
 
+import Charts.DrawerXYLineChart;
+import Signals.*;
+import org.jfree.chart.ui.UIUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
+import java.util.TreeMap;
 
 public class App implements ItemListener {
     private JPanel mainPanel;
@@ -32,9 +38,27 @@ public class App implements ItemListener {
         //Create the "cards".
         //NoiseUniformDistribution
         JPanel card1 = new JPanel();
-        card1.add(new JButton("Button 1"));
-        card1.add(new JButton("Button 2"));
-        card1.add(new JButton("Button 3"));
+        JTextField s1A = new JTextField("A", 4);
+        JTextField s1t1 = new JTextField("t1", 4);
+        JTextField s1d = new JTextField("d", 4);
+        JButton s1button = new JButton("Show");
+        s1button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Signal signal = new NoiseUniformDistribution(Double.parseDouble(s1A.getText()),
+                        Double.parseDouble(s1t1.getText()),
+                        Double.parseDouble(s1d.getText()));
+                TreeMap<BigDecimal, Double> map1 = signal.generate();
+                DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map1);
+                d.pack();
+                UIUtils.centerFrameOnScreen(d);
+                d.setVisible(true);
+            }
+        });
+        card1.add(s1A);
+        card1.add(s1t1);
+        card1.add(s1d);
+        card1.add(s1button);
 
         //NoiseGaussian
         JPanel card2 = new JPanel();
