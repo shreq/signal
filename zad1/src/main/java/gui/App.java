@@ -14,70 +14,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.Vector;
 
 public class App implements ItemListener {
 
     final int BINS = 20;
-
-    private void showChart(JFreeChart chart){
-        JFrame chartFrame = new JFrame();
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartFrame.add(chartPanel);
-        chartFrame.pack();
-        chartFrame.setVisible(true);
-    }
-
-    private void drawSignal(Signal signal) {
-        XYDataset dataset = Utils.createDatasetSignal(signal.generate());
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                signal.getClass().getSimpleName(), "t[s]", "A",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true, true, false
-        );
-        showChart(chart);
-    }
-
-    private void drawHistogram(Signal signal) {
-        TreeMap<BigDecimal, Double> map = signal.generate();
-
-        // region trimming map
-        if (signal instanceof SignalRectangular) {
-            map = Calculator.Trim((SignalRectangular) signal, map);
-        }
-        else if (signal instanceof SignalRectangularSymmetric) {
-            map = Calculator.Trim((SignalRectangularSymmetric) signal, map);
-        }
-        else if (signal instanceof SignalSinusoidal) {
-            map = Calculator.Trim((SignalSinusoidal) signal, map);
-        }
-        else if (signal instanceof SignalSinusoidalStraightenedOneHalf) {
-            map = Calculator.Trim((SignalSinusoidalStraightenedOneHalf) signal, map);
-        }
-        else if (signal instanceof SignalSinusoidalStraightenedTwoHalf) {
-            map = Calculator.Trim((SignalSinusoidalStraightenedTwoHalf) signal, map);
-        }
-        else if (signal instanceof SignalTriangular) {
-            map = Calculator.Trim((SignalTriangular) signal, map);
-        }
-        // endregion
-
-        HistogramDataset dataset = Utils.createDatasetHistogram(map, BINS);
-
-        if (map.size() > 0) {
-            JFreeChart chart = ChartFactory.createHistogram(
-                    signal.getClass().getSimpleName(), "value", "frequency",
-                    dataset,
-                    PlotOrientation.VERTICAL,
-                    false, true, false
-            );
-            showChart(chart);
-        }
-    }
-
-    private JPanel mainPanel;
 
     private JPanel cards;  //a panel that uses CardLayout
     private final static String SIGNAL1 = "NoiseUniformDistribution";
@@ -90,6 +34,39 @@ public class App implements ItemListener {
     private final static String SIGNAL8 = "SignalTriangular";
     private final static String SIGNAL9 = "StepUnit";
     private final static String SIGNAL10 = "NoiseImpulse";
+
+    private void showChart(JFreeChart chart){
+        JFrame chartFrame = new JFrame();
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartFrame.add(chartPanel);
+        chartFrame.pack();
+        chartFrame.setVisible(true);
+    }
+
+    private void drawSignal(String name, TreeMap<BigDecimal, Double> map) {
+        XYDataset dataset = Utils.createDatasetSignal(map);
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                name, "t[s]", "A",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false
+        );
+        showChart(chart);
+    }
+
+    private void drawHistogram(String name, TreeMap<BigDecimal, Double> map) {
+
+        HistogramDataset dataset = Utils.createDatasetHistogram(map, BINS);
+        if (map.size() > 0) {
+            JFreeChart chart = ChartFactory.createHistogram(
+                    name, "value", "frequency",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    false, true, false
+            );
+            showChart(chart);
+        }
+    }
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
@@ -117,13 +94,20 @@ public class App implements ItemListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 double[] params = new double[names.length];
+                double d = -1, T = -1;
                 for(int i = 0; i < names.length; i++) {
                     params[i] = Double.parseDouble(fields[i].getText());
+                    if(names[i] == "d") d = params[i];
+                    if(names[i] == "T") T = params[i];
                 }
 
                 finalSignal.setAllFields(params);
-                drawSignal(finalSignal);
-                drawHistogram(finalSignal);
+                TreeMap<BigDecimal, Double> data = finalSignal.generate();
+                drawSignal(signalClass.getSimpleName(), data);
+                if( d != -1 && T != -1 ){
+                    data = Calculator.Trim(new BigDecimal(d), new BigDecimal(T), data);
+                }
+                drawHistogram(signalClass.getSimpleName(), data);
             }
         });
         card.add(button);
@@ -132,6 +116,7 @@ public class App implements ItemListener {
     }
 
     public void addComponentToPane(Container pane) {
+
         JPanel comboBoxPane = new JPanel();
         String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10};
         JComboBox cb = new JComboBox(comboBoxItems);
@@ -139,45 +124,37 @@ public class App implements ItemListener {
         cb.addItemListener(this);
         comboBoxPane.add(cb);
 
-        Vector<JPanel> cardsArray = new Vector<>();
-
         // region create the cards
+        Vector<JPanel> cardsArray = new Vector<>();
         // NoiseUniformDistribution
         cardsArray.add(createCard(NoiseUniformDistribution.class, "A", "t1", "d"));
-
         // NoiseGaussian
         cardsArray.add(createCard(NoiseGaussian.class, "t1", "d"));
-
         // SignalSinusoidal
         cardsArray.add(createCard(SignalSinusoidal.class, "A", "t1", "d", "T"));
-
         // SignalSinusoidalStraightenedOneHalf
         cardsArray.add(createCard(SignalSinusoidalStraightenedOneHalf.class, "A", "t1", "d", "T"));
-
         // SignalSinusoidalStraightenedTwoHalf
         cardsArray.add(createCard(SignalSinusoidalStraightenedTwoHalf.class, "A", "t1", "d", "T"));
-
         // SignalRectangular
         cardsArray.add(createCard(SignalRectangular.class, "A", "t1", "d", "T", "kw"));
-
         // SignalRectangularSymmetric
         cardsArray.add(createCard(SignalRectangularSymmetric.class, "A", "t1", "d", "T", "kw"));
-
         // SignalTriangular
         cardsArray.add(createCard(SignalTriangular.class, "A", "t1", "d", "T", "kw"));
-
         // StepUnit
         cardsArray.add(createCard(StepUnit.class, "A", "t1", "d", "ts"));
-
         // NoiseImpulse
         cardsArray.add(createCard(NoiseImpulse.class, "A", "t1", "d", "f", "p"));
         // endregion
 
         // create the panel that contains the cards
         cards = new JPanel(new CardLayout());
+        // pair cards with their names
         for(int i = 0; i < cardsArray.size(); i++) {
             cards.add(cardsArray.elementAt(i), comboBoxItems[i]);
         }
+
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
     }

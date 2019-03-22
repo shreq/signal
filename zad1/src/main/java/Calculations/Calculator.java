@@ -8,7 +8,6 @@ import java.util.TreeMap;
 
 public class Calculator {
 
-    //region Trimmers
     public static TreeMap<BigDecimal, Double> Trim(BigDecimal d, BigDecimal T, TreeMap<BigDecimal, Double> map) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
@@ -20,34 +19,8 @@ public class Calculator {
                 result.put(e.getKey(), e.getValue());
             }
         }
-
         return result;
     }
-
-    public static TreeMap<BigDecimal, Double> Trim(SignalRectangular signal, TreeMap<BigDecimal, Double> map) {
-        return Trim(signal.d, signal.T, map);
-    }
-
-    public static TreeMap<BigDecimal, Double> Trim(SignalRectangularSymmetric signal, TreeMap<BigDecimal, Double> map) {
-        return Trim(signal.d, signal.T, map);
-    }
-
-    public static TreeMap<BigDecimal, Double> Trim(SignalSinusoidal signal, TreeMap<BigDecimal, Double> map) {
-        return Trim(signal.d, signal.T, map);
-    }
-
-    public static TreeMap<BigDecimal, Double> Trim(SignalSinusoidalStraightenedOneHalf signal, TreeMap<BigDecimal, Double> map) {
-        return Trim(signal.d, signal.T, map);
-    }
-
-    public static TreeMap<BigDecimal, Double> Trim(SignalSinusoidalStraightenedTwoHalf signal, TreeMap<BigDecimal, Double> map) {
-        return Trim(signal.d, signal.T, map);
-    }
-
-    public static TreeMap<BigDecimal, Double> Trim(SignalTriangular signal, TreeMap<BigDecimal, Double> map) {
-        return Trim(signal.d, signal.T, map);
-    }
-    //endregion
 
     public static double Mean(TreeMap<BigDecimal, Double> a) {
         double sum = 0.0;
