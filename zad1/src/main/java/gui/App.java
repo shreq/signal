@@ -12,10 +12,11 @@ import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -70,13 +71,59 @@ public class App implements ItemListener {
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
+        GroupLayout layout = new GroupLayout(card);
+        card.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
 
-        // region create fields
+        // create main vertical group
+        GroupLayout.SequentialGroup mainVertical = layout.createSequentialGroup();
+        layout.setVerticalGroup(mainVertical);
+        // create main horizontal group
+        GroupLayout.ParallelGroup mainHorizontal = layout.createParallelGroup();
+        layout.setHorizontalGroup(mainHorizontal);
+
+        // region create input fields
+        GroupLayout.ParallelGroup inputFieldsVertical = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+        GroupLayout.SequentialGroup inputFieldsHorizontal = layout.createSequentialGroup();
         JTextField[] fields = new JTextField[names.length];
         for (int i = 0; i < names.length; i++) {
             fields[i] = new JTextField(names[i], 4);
-            card.add(fields[i]);
+            //card.add(fields[i]);
+            inputFieldsVertical.addComponent(fields[i]);
+            inputFieldsHorizontal.addComponent(fields[i]);
         }
+        mainVertical.addGroup(inputFieldsVertical);
+        mainHorizontal.addGroup(inputFieldsHorizontal);
+        // endregion
+        // region create button
+        JButton button = new JButton("Show");
+        mainVertical.addComponent(button);
+        mainHorizontal.addComponent(button);
+        // endregion
+        // region create output fields
+        JLabel mean = new JLabel();
+        JLabel meanDesc = new JLabel("Mean:");
+        JLabel meanAbs = new JLabel();
+        JLabel meanAbsDesc = new JLabel("Abs. mean:");
+        JLabel rootMeanSqr = new JLabel();
+        JLabel rootMeanSqrDesc = new JLabel("Root mean sqr.:");
+        JLabel variance = new JLabel();
+        JLabel varianceDesc = new JLabel("Variance:");
+        JLabel avgPower = new JLabel();
+        JLabel avgPowerDesc = new JLabel("Avg. power:");
+        GroupLayout.ParallelGroup outputFieldsVertical = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+        GroupLayout.SequentialGroup outputFieldsHorizontal = layout.createSequentialGroup();
+        outputFieldsVertical.addComponent(meanDesc).addComponent(mean).addComponent(meanAbsDesc)
+                .addComponent(meanAbs).addComponent(rootMeanSqrDesc).addComponent(rootMeanSqr)
+                .addComponent(varianceDesc).addComponent(variance).addComponent(avgPowerDesc)
+                .addComponent(avgPower);
+        outputFieldsHorizontal.addComponent(meanDesc).addComponent(mean).addComponent(meanAbsDesc)
+                .addComponent(meanAbs).addComponent(rootMeanSqrDesc).addComponent(rootMeanSqr)
+                .addComponent(varianceDesc).addComponent(variance).addComponent(avgPowerDesc)
+                .addComponent(avgPower);
+        mainVertical.addGroup(outputFieldsVertical);
+        mainHorizontal.addGroup(outputFieldsHorizontal);
         // endregion
         // region create signal
         Signal signal = null;
@@ -88,8 +135,7 @@ public class App implements ItemListener {
         }
         Signal finalSignal = signal;
         // endregion
-        // region create button
-        JButton button = new JButton("Show");
+        // region create button action listener
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -103,6 +149,13 @@ public class App implements ItemListener {
 
                 finalSignal.setAllFields(params);
                 TreeMap<BigDecimal, Double> data = finalSignal.generate();
+
+                mean.setText(Double.toString(Calculator.Mean(data)));
+                meanAbs.setText(Double.toString(Calculator.MeanAbsolute(data)));
+                rootMeanSqr.setText(Double.toString(Calculator.RootMeanSquare(data)));
+                variance.setText(Double.toString(Calculator.Variance(data)));
+                avgPower.setText(Double.toString(Calculator.AvgPower(data)));
+
                 drawSignal(signalClass.getSimpleName(), data);
                 if( d != -1 && T != -1 ){
                     data = Calculator.Trim(new BigDecimal(d), new BigDecimal(T), data);
@@ -110,7 +163,6 @@ public class App implements ItemListener {
                 drawHistogram(signalClass.getSimpleName(), data);
             }
         });
-        card.add(button);
         // endregion
         return card;
     }
@@ -166,7 +218,7 @@ public class App implements ItemListener {
 
     private static void createAndShowGUI() {
         // create and set up the window
-        JFrame frame = new JFrame("CardLayoutDemo");
+        JFrame frame = new JFrame("CPS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // create and set up the content pane
@@ -175,7 +227,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(500, 250);
+        frame.setSize(800, 150);
         frame.setVisible(true);
     }
 
