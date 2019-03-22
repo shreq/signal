@@ -22,8 +22,6 @@ import java.util.Vector;
 
 public class App implements ItemListener {
 
-    final int BINS = 20;
-
     private JPanel cards;  //a panel that uses CardLayout
     private final static String SIGNAL1 = "NoiseUniformDistribution";
     private final static String SIGNAL2 = "NoiseGaussian";
@@ -57,6 +55,7 @@ public class App implements ItemListener {
 
     private void drawHistogram(String name, TreeMap<BigDecimal, Double> map) {
 
+        int BINS = 20;
         HistogramDataset dataset = Utils.createDatasetHistogram(map, BINS);
         if (map.size() > 0) {
             JFreeChart chart = ChartFactory.createHistogram(
@@ -89,7 +88,6 @@ public class App implements ItemListener {
         JTextField[] fields = new JTextField[names.length];
         for (int i = 0; i < names.length; i++) {
             fields[i] = new JTextField(names[i], 4);
-            //card.add(fields[i]);
             inputFieldsVertical.addComponent(fields[i]);
             inputFieldsHorizontal.addComponent(fields[i]);
         }
@@ -99,7 +97,7 @@ public class App implements ItemListener {
         // region create button
         JButton button = new JButton("Show");
         mainVertical.addComponent(button);
-        mainHorizontal.addComponent(button);
+        mainHorizontal.addComponent(button, GroupLayout.Alignment.CENTER);
         // endregion
         // region create output fields
         JLabel mean = new JLabel();
@@ -143,10 +141,11 @@ public class App implements ItemListener {
                 double d = -1, T = -1;
                 for(int i = 0; i < names.length; i++) {
                     params[i] = Double.parseDouble(fields[i].getText());
-                    if(names[i] == "d") d = params[i];
-                    if(names[i] == "T") T = params[i];
+                    if(names[i].equals("d")) d = params[i];
+                    if(names[i].equals("T")) T = params[i];
                 }
 
+                assert finalSignal != null;
                 finalSignal.setAllFields(params);
                 TreeMap<BigDecimal, Double> data = finalSignal.generate();
 
@@ -167,11 +166,11 @@ public class App implements ItemListener {
         return card;
     }
 
-    public void addComponentToPane(Container pane) {
+    private void addComponentToPane(Container pane) {
 
         JPanel comboBoxPane = new JPanel();
         String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10};
-        JComboBox cb = new JComboBox(comboBoxItems);
+        JComboBox<String> cb = new JComboBox<>(comboBoxItems);
         cb.setEditable(false);
         cb.addItemListener(this);
         comboBoxPane.add(cb);
@@ -206,9 +205,29 @@ public class App implements ItemListener {
         for(int i = 0; i < cardsArray.size(); i++) {
             cards.add(cardsArray.elementAt(i), comboBoxItems[i]);
         }
+        // region create save buttons
+        JPanel buttonPane = new JPanel();
+        JButton save = new JButton("Save");
+        JButton load = new JButton("load");
+        save.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        load.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        buttonPane.add(save);
+        buttonPane.add(load);
+        // endregion
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
+        pane.add(buttonPane, BorderLayout.PAGE_END);
     }
 
     public void itemStateChanged(ItemEvent evt) {
@@ -227,7 +246,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(800, 150);
+        frame.setSize(800, 200);
         frame.setVisible(true);
     }
 
@@ -242,6 +261,6 @@ public class App implements ItemListener {
 
         UIManager.put("swing.boldMetal", Boolean.FALSE);
 
-        javax.swing.SwingUtilities.invokeLater(() -> createAndShowGUI());
+        javax.swing.SwingUtilities.invokeLater(App::createAndShowGUI);
     }
 }
