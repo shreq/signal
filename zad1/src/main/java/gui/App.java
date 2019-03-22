@@ -17,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -148,12 +150,13 @@ public class App implements ItemListener {
                 assert finalSignal != null;
                 finalSignal.setAllFields(params);
                 TreeMap<BigDecimal, Double> data = finalSignal.generate();
-
-                mean.setText(Double.toString(Calculator.Mean(data)));
-                meanAbs.setText(Double.toString(Calculator.MeanAbsolute(data)));
-                rootMeanSqr.setText(Double.toString(Calculator.RootMeanSquare(data)));
-                variance.setText(Double.toString(Calculator.Variance(data)));
-                avgPower.setText(Double.toString(Calculator.AvgPower(data)));
+                DecimalFormat dc = new DecimalFormat("0.00000");
+                dc.setRoundingMode(RoundingMode.CEILING);
+                mean.setText(dc.format(Calculator.Mean(data)));
+                meanAbs.setText(dc.format(Calculator.MeanAbsolute(data)));
+                rootMeanSqr.setText(dc.format(Calculator.RootMeanSquare(data)));
+                variance.setText(dc.format(Calculator.Variance(data)));
+                avgPower.setText(dc.format(Calculator.AvgPower(data)));
 
                 drawSignal(signalClass.getSimpleName(), data);
                 if( d != -1 && T != -1 ){
