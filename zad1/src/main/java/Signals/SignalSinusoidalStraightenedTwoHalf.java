@@ -56,6 +56,6 @@ public class SignalSinusoidalStraightenedTwoHalf implements Signal {
 
     @Override
     public TreeMap<BigDecimal, Double> generate() {
-        return generate(T.multiply(new BigDecimal(5)));
+        return generate(new BigDecimal(SAMPLES).divide(d, SCALE, RoundingMode.CEILING));
     }
 }
