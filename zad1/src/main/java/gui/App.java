@@ -1,10 +1,14 @@
 package gui;
 
 import Calculations.Calculator;
-import Charts.DrawerXYLineChart;
-import Charts.Histogram;
+import Charts.Utils;
 import Signals.*;
-import org.jfree.chart.ui.UIUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,12 +21,23 @@ public class App implements ItemListener {
 
     final int BINS = 20;
 
+    private void showChart(JFreeChart chart){
+        JFrame chartFrame = new JFrame();
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartFrame.add(chartPanel);
+        chartFrame.pack();
+        chartFrame.setVisible(true);
+    }
+
     private void drawSignal(Signal signal) {
-        TreeMap<BigDecimal, Double> map = signal.generate();
-        DrawerXYLineChart d = new DrawerXYLineChart("Chart", signal.getClass().getSimpleName(), map);
-        d.pack();
-        UIUtils.centerFrameOnScreen(d);
-        d.setVisible(true);
+        XYDataset dataset = Utils.createDatasetSignal(signal.generate());
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                signal.getClass().getSimpleName(), "t[s]", "A",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false
+        );
+        showChart(chart);
     }
 
     private void drawHistogram(Signal signal) {
@@ -49,11 +64,16 @@ public class App implements ItemListener {
         }
         // endregion
 
+        HistogramDataset dataset = Utils.createDatasetHistogram(map, BINS);
+
         if (map.size() > 0) {
-            Histogram e = new Histogram("Chart", "Histogram", map, BINS);
-            e.pack();
-            UIUtils.centerFrameOnScreen(e);
-            e.setVisible(true);
+            JFreeChart chart = ChartFactory.createHistogram(
+                    signal.getClass().getSimpleName(), "value", "frequency",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    false, true, false
+            );
+            showChart(chart);
         }
     }
 
@@ -73,13 +93,25 @@ public class App implements ItemListener {
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
-        JTextField[] fields = new JTextField[names.length];
 
+        // region create fields
+        JTextField[] fields = new JTextField[names.length];
         for (int i = 0; i < names.length; i++) {
             fields[i] = new JTextField(names[i], 4);
             card.add(fields[i]);
         }
-
+        // endregion
+        // region create signal
+        Signal signal = null;
+        try {
+            signal = signalClass.newInstance();
+        }
+        catch (InstantiationException | IllegalAccessException e1) {
+            e1.printStackTrace();
+        }
+        Signal finalSignal = signal;
+        // endregion
+        // region create button
         JButton button = new JButton("Show");
         button.addActionListener(new ActionListener() {
             @Override
@@ -88,20 +120,14 @@ public class App implements ItemListener {
                 for(int i = 0; i < names.length; i++) {
                     params[i] = Double.parseDouble(fields[i].getText());
                 }
-                Signal signal = null;
-                try {
-                    signal = signalClass.newInstance();
-                }
-                catch (InstantiationException | IllegalAccessException e1) {
-                    e1.printStackTrace();
-                }
-                signal.setAllFields(params);
-                drawSignal(signal);
-                drawHistogram(signal);
+
+                finalSignal.setAllFields(params);
+                drawSignal(finalSignal);
+                drawHistogram(finalSignal);
             }
         });
-
         card.add(button);
+        // endregion
         return card;
     }
 
