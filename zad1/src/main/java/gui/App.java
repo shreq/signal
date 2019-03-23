@@ -12,10 +12,9 @@ import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -35,6 +34,7 @@ public class App implements ItemListener {
     private final static String SIGNAL8 = "SignalTriangular";
     private final static String SIGNAL9 = "StepUnit";
     private final static String SIGNAL10 = "NoiseImpulse";
+    private Signal currentSignal;
 
     private void showChart(JFreeChart chart){
         JFrame chartFrame = new JFrame();
@@ -128,42 +128,39 @@ public class App implements ItemListener {
         // region create signal
         Signal signal = null;
         try {
-            signal = signalClass.newInstance();
-        }
-        catch (InstantiationException | IllegalAccessException e1) {
-            e1.printStackTrace();
+            signal = signalClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
         Signal finalSignal = signal;
         // endregion
         // region create button action listener
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                double[] params = new double[names.length];
-                double d = -1, T = -1;
-                for(int i = 0; i < names.length; i++) {
-                    params[i] = Double.parseDouble(fields[i].getText());
-                    if(names[i].equals("d")) d = params[i];
-                    if(names[i].equals("T")) T = params[i];
-                }
-
-                assert finalSignal != null;
-                finalSignal.setAllFields(params);
-                TreeMap<BigDecimal, Double> data = finalSignal.generate();
-                DecimalFormat dc = new DecimalFormat("0.00000");
-                dc.setRoundingMode(RoundingMode.CEILING);
-                mean.setText(dc.format(Calculator.Mean(data)));
-                meanAbs.setText(dc.format(Calculator.MeanAbsolute(data)));
-                rootMeanSqr.setText(dc.format(Calculator.RootMeanSquare(data)));
-                variance.setText(dc.format(Calculator.Variance(data)));
-                avgPower.setText(dc.format(Calculator.AvgPower(data)));
-
-                drawSignal(signalClass.getSimpleName(), data);
-                if( d != -1 && T != -1 ){
-                    data = Calculator.Trim(new BigDecimal(d), new BigDecimal(T), data);
-                }
-                drawHistogram(signalClass.getSimpleName(), data);
+        button.addActionListener(e -> {
+            double[] params = new double[names.length];
+            double d = -1, T = -1;
+            for(int i = 0; i < names.length; i++) {
+                params[i] = Double.parseDouble(fields[i].getText());
+                if(names[i].equals("d")) d = params[i];
+                if(names[i].equals("T")) T = params[i];
             }
+
+            assert finalSignal != null;
+            finalSignal.setAllFields(params);
+            currentSignal = finalSignal;
+            TreeMap<BigDecimal, Double> data = finalSignal.generate();
+
+            drawSignal(signalClass.getSimpleName(), data);
+            if( d != -1 && T != -1 ){
+                data = Calculator.Trim(new BigDecimal(d), new BigDecimal(T), data);
+            }
+            drawHistogram(signalClass.getSimpleName(), data);
+            DecimalFormat dc = new DecimalFormat("0.00000");
+            dc.setRoundingMode(RoundingMode.CEILING);
+            mean.setText(dc.format(Calculator.Mean(data)));
+            meanAbs.setText(dc.format(Calculator.MeanAbsolute(data)));
+            rootMeanSqr.setText(dc.format(Calculator.RootMeanSquare(data)));
+            variance.setText(dc.format(Calculator.Variance(data)));
+            avgPower.setText(dc.format(Calculator.AvgPower(data)));
         });
         // endregion
         return card;
@@ -208,21 +205,16 @@ public class App implements ItemListener {
         for(int i = 0; i < cardsArray.size(); i++) {
             cards.add(cardsArray.elementAt(i), comboBoxItems[i]);
         }
+
         // region create save buttons
         JPanel buttonPane = new JPanel();
         JButton save = new JButton("Save");
         JButton load = new JButton("load");
-        save.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        save.addActionListener(e -> {
 
-            }
         });
-        load.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        load.addActionListener(e -> {
 
-            }
         });
         buttonPane.add(save);
         buttonPane.add(load);
