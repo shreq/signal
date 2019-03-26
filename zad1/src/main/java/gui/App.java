@@ -34,7 +34,8 @@ public class App implements ItemListener {
     private final static String SIGNAL8 = "SignalTriangular";
     private final static String SIGNAL9 = "StepUnit";
     private final static String SIGNAL10 = "NoiseImpulse";
-    private Signal currentSignal;
+
+    private TreeMap<BigDecimal, Double> currentData;
 
     private void showChart(JFreeChart chart){
         JFrame chartFrame = new JFrame();
@@ -85,6 +86,9 @@ public class App implements ItemListener {
         layout.setHorizontalGroup(mainHorizontal);
 
         // region create input fields
+        JLabel label = new JLabel("Required fields: " + String.join(", ", names));
+        mainVertical.addComponent(label);
+        mainHorizontal.addComponent(label, GroupLayout.Alignment.CENTER);
         GroupLayout.ParallelGroup inputFieldsVertical = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
         GroupLayout.SequentialGroup inputFieldsHorizontal = layout.createSequentialGroup();
         JTextField[] fields = new JTextField[names.length];
@@ -146,8 +150,8 @@ public class App implements ItemListener {
 
             assert finalSignal != null;
             finalSignal.setAllFields(params);
-            currentSignal = finalSignal;
             TreeMap<BigDecimal, Double> data = finalSignal.generate();
+            currentData = data;
 
             drawSignal(signalClass.getSimpleName(), data);
             if( d != -1 && T != -1 ){
@@ -209,13 +213,12 @@ public class App implements ItemListener {
         // region create save buttons
         JPanel buttonPane = new JPanel();
         JButton save = new JButton("Save");
-        JButton load = new JButton("load");
+        JButton load = new JButton("Load");
         save.addActionListener(e -> {
-
-
+            SaveDialog.showDialog(currentData);
         });
         load.addActionListener(e -> {
-
+            LoadDialog.showDialog();
         });
         buttonPane.add(save);
         buttonPane.add(load);
@@ -248,8 +251,7 @@ public class App implements ItemListener {
 
     public static void main(String[] args) throws IllegalAccessException {
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (UnsupportedLookAndFeelException | InstantiationException | ClassNotFoundException ex) {
             ex.printStackTrace();

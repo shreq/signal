@@ -6,37 +6,26 @@ import serialization.SerializationModel;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.TreeMap;
 
-public class SaveDialog extends JDialog {
+public class LoadDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JLabel fsLabel;
-    private JTextField fsTextField;
-    private JTextField filenameTextField;
-    private JLabel filenameLabel;
+    private JLabel loadLabel;
+    private JTextField loadTextField;
     private JButton browseButton;
 
-    private TreeMap<BigDecimal, Double> data;
-
-    public SaveDialog(TreeMap<BigDecimal, Double> _data) {
-        data = _data;
+    public LoadDialog() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
+        buttonOK.addActionListener(e -> onOK());
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
+        buttonCancel.addActionListener(e -> onCancel());
+
+        browseButton.addActionListener(e -> {
+            onBrowse();
         });
 
         // call onCancel() when cross is clicked
@@ -53,16 +42,13 @@ public class SaveDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        browseButton.addActionListener(e -> {
-            onBrowse();
-        });
     }
 
     private void onOK() {
-        SerializationModel model = new SerializationModel(data.firstKey().doubleValue(), Double.parseDouble(fsTextField.getText()), data);
         try {
-            Serialization.Serialize(model, filenameTextField.getText());
+            SerializationModel model = (SerializationModel)Serialization.Deserialize(loadTextField.getText());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,18 +64,12 @@ public class SaveDialog extends JDialog {
         final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         int returnVal = fc.showOpenDialog(contentPane);
         if(returnVal == JFileChooser.APPROVE_OPTION){
-            filenameTextField.setText(fc.getSelectedFile().getAbsolutePath());
+            loadTextField.setText(fc.getSelectedFile().getAbsolutePath());
         }
     }
 
-    public static void showDialog(TreeMap<BigDecimal, Double> _data) {
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-        SaveDialog dialog = new SaveDialog(_data);
+    public static void showDialog() {
+        LoadDialog dialog = new LoadDialog();
         dialog.pack();
         dialog.setVisible(true);
     }
