@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 public interface Signal {
     short SAMPLES = 500;
-    int SCALE = 5;
+    int SCALE = 10;
 
     TreeMap<BigDecimal, Double> generate(BigDecimal fs);
     TreeMap<BigDecimal, Double> generate(double fs);
