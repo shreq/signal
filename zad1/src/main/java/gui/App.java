@@ -1,23 +1,22 @@
 package gui;
 
 import Calculations.Calculator;
+import Calculations.Operator;
 import Charts.Utils;
 import Signals.*;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.xy.XYDataset;
+import serialization.Serialization;
+import serialization.SerializationModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -36,40 +35,7 @@ public class App implements ItemListener {
     private final static String SIGNAL10 = "NoiseImpulse";
 
     private TreeMap<BigDecimal, Double> currentData;
-
-    private void showChart(JFreeChart chart){
-        JFrame chartFrame = new JFrame();
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartFrame.add(chartPanel);
-        chartFrame.pack();
-        chartFrame.setVisible(true);
-    }
-
-    private void drawSignal(String name, TreeMap<BigDecimal, Double> map) {
-        XYDataset dataset = Utils.createDatasetSignal(map);
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                name, "t[s]", "A",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true, true, false
-        );
-        showChart(chart);
-    }
-
-    private void drawHistogram(String name, TreeMap<BigDecimal, Double> map) {
-
-        int BINS = 20;
-        HistogramDataset dataset = Utils.createDatasetHistogram(map, BINS);
-        if (map.size() > 0) {
-            JFreeChart chart = ChartFactory.createHistogram(
-                    name, "value", "frequency",
-                    dataset,
-                    PlotOrientation.VERTICAL,
-                    false, true, false
-            );
-            showChart(chart);
-        }
-    }
+    private double currentFs;
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
@@ -86,7 +52,7 @@ public class App implements ItemListener {
         layout.setHorizontalGroup(mainHorizontal);
 
         // region create input fields
-        JLabel label = new JLabel("Required fields: " + String.join(", ", names));
+        JLabel label = new JLabel("Required fields: " + String.join(", ", names) + ", fs");
         mainVertical.addComponent(label);
         mainHorizontal.addComponent(label, GroupLayout.Alignment.CENTER);
         GroupLayout.ParallelGroup inputFieldsVertical = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
@@ -97,6 +63,9 @@ public class App implements ItemListener {
             inputFieldsVertical.addComponent(fields[i]);
             inputFieldsHorizontal.addComponent(fields[i]);
         }
+        JTextField fsTextField = new JTextField("fs");
+        inputFieldsVertical.addComponent(fsTextField);
+        inputFieldsHorizontal.addComponent(fsTextField);
         mainVertical.addGroup(inputFieldsVertical);
         mainHorizontal.addGroup(inputFieldsHorizontal);
         // endregion
@@ -150,14 +119,15 @@ public class App implements ItemListener {
 
             assert finalSignal != null;
             finalSignal.setAllFields(params);
-            TreeMap<BigDecimal, Double> data = finalSignal.generate();
+            TreeMap<BigDecimal, Double> data = finalSignal.generate(Double.parseDouble(fsTextField.getText()));
+            currentFs = Double.parseDouble(fsTextField.getText());
             currentData = data;
 
-            drawSignal(signalClass.getSimpleName(), data);
+            Utils.drawSignal(signalClass.getSimpleName(), data);
             if( d != -1 && T != -1 ){
                 data = Calculator.Trim(new BigDecimal(d), new BigDecimal(T), data);
             }
-            drawHistogram(signalClass.getSimpleName(), data);
+            Utils.drawHistogram(signalClass.getSimpleName(), data);
             DecimalFormat dc = new DecimalFormat("0.00000");
             dc.setRoundingMode(RoundingMode.CEILING);
             mean.setText(dc.format(Calculator.Mean(data)));
@@ -210,23 +180,87 @@ public class App implements ItemListener {
             cards.add(cardsArray.elementAt(i), comboBoxItems[i]);
         }
 
-        // region create save buttons
-        JPanel buttonPane = new JPanel();
+        // region create save and math buttons
+        JPanel mainButtonPane = new JPanel();
+        JPanel buttonPane1 = new JPanel();
+        JPanel buttonPane2 = new JPanel();
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
         save.addActionListener(e -> {
-            SaveDialog.showDialog(currentData);
+            SaveDialog.showDialog(currentData, currentFs);
         });
         load.addActionListener(e -> {
             LoadDialog.showDialog();
         });
-        buttonPane.add(save);
-        buttonPane.add(load);
+        buttonPane1.add(save);
+        buttonPane1.add(load);
+        JButton selectButton = new JButton("Select signals");
+        JButton add = new JButton("Add");
+        JButton substract = new JButton("Substract");
+        JButton multiply = new JButton("Multiply");
+        JButton divide = new JButton("Divide");
+        ArrayList<TreeMap<BigDecimal, Double>> data = new ArrayList<>();
+        data.add(null);
+        data.add(null);
+        selectButton.addActionListener(e -> {
+            ArrayList<TreeMap<BigDecimal, Double>> temp = getDataFromFiles(pane);
+            data.set(0, temp.get(0));
+            data.set(1, temp.get(1));
+        });
+        add.addActionListener(e -> {
+            TreeMap<BigDecimal, Double> result = Operator.Addition(data.get(0), data.get(1));
+            Utils.drawSignal("Addition", result);
+        });
+        substract.addActionListener(e -> {
+            TreeMap<BigDecimal, Double> result = Operator.Subtraction(data.get(0), data.get(1));
+            Utils.drawSignal("Subtraction", result);
+        });
+        multiply.addActionListener(e -> {
+            TreeMap<BigDecimal, Double> result = Operator.Multiplication(data.get(0), data.get(1));
+            Utils.drawSignal("Multiplication", result);
+        });
+        divide.addActionListener(e -> {
+            TreeMap<BigDecimal, Double> result = Operator.Division(data.get(0), data.get(1));
+            Utils.drawSignal("Division", result);
+        });
+        buttonPane2.add(selectButton);
+        buttonPane2.add(add);
+        buttonPane2.add(substract);
+        buttonPane2.add(multiply);
+        buttonPane2.add(divide);
+        mainButtonPane.add(buttonPane1, BorderLayout.PAGE_START);
+        mainButtonPane.add(buttonPane2, BorderLayout.PAGE_END);
         // endregion
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
-        pane.add(buttonPane, BorderLayout.PAGE_END);
+        pane.add(mainButtonPane, BorderLayout.PAGE_END);
+    }
+
+    private ArrayList<TreeMap<BigDecimal, Double>> getDataFromFiles(Container pane){
+        SerializationModel left = null;
+        SerializationModel right = null;
+        ArrayList<TreeMap<BigDecimal, Double>> ret = new ArrayList<>();
+        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        int returnVal = fc.showOpenDialog(pane);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            try {
+                left = (SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath());
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        returnVal = fc.showOpenDialog(pane);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            try {
+                right = (SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath());
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        ret.add(left.data);
+        ret.add(right.data);
+        return ret;
     }
 
     public void itemStateChanged(ItemEvent evt) {

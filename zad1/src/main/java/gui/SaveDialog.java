@@ -18,15 +18,18 @@ public class SaveDialog extends JDialog {
     private JTextField filenameTextField;
     private JLabel filenameLabel;
     private JButton browseButton;
+    private JLabel frequencyLabel;
 
     private TreeMap<BigDecimal, Double> data;
+    private double fs;
 
-    public SaveDialog(TreeMap<BigDecimal, Double> _data) {
+    public SaveDialog(TreeMap<BigDecimal, Double> _data, double _fs) {
+        fs = _fs;
         data = _data;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-
+        frequencyLabel.setText(frequencyLabel.getText() + fs);
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
@@ -60,7 +63,12 @@ public class SaveDialog extends JDialog {
     }
 
     private void onOK() {
-        SerializationModel model = new SerializationModel(data.firstKey().doubleValue(), Double.parseDouble(fsTextField.getText()), data);
+        double sample = Double.parseDouble(fsTextField.getText());
+        if(sample > fs || sample <= 0){
+            JOptionPane.showMessageDialog(null, "Invalid sampling frequency");
+            return;
+        }
+        SerializationModel model = new SerializationModel(data.firstKey().doubleValue(), sample, data);
         try {
             Serialization.Serialize(model, filenameTextField.getText());
         } catch (IOException e) {
@@ -82,14 +90,13 @@ public class SaveDialog extends JDialog {
         }
     }
 
-    public static void showDialog(TreeMap<BigDecimal, Double> _data) {
-
+    public static void showDialog(TreeMap<BigDecimal, Double> _data, double _fs) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-        SaveDialog dialog = new SaveDialog(_data);
+        SaveDialog dialog = new SaveDialog(_data, _fs);
         dialog.pack();
         dialog.setVisible(true);
     }
