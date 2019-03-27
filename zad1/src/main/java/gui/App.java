@@ -181,7 +181,9 @@ public class App implements ItemListener {
         }
 
         // region create save and math buttons
-        JPanel buttonPane = new JPanel();
+        JPanel mainButtonPane = new JPanel();
+        JPanel buttonPane1 = new JPanel();
+        JPanel buttonPane2 = new JPanel();
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
         save.addActionListener(e -> {
@@ -190,47 +192,49 @@ public class App implements ItemListener {
         load.addActionListener(e -> {
             LoadDialog.showDialog();
         });
-        buttonPane.add(save);
-        buttonPane.add(load);
-        
+        buttonPane1.add(save);
+        buttonPane1.add(load);
+        JButton selectButton = new JButton("Select signals");
         JButton add = new JButton("Add");
         JButton substract = new JButton("Substract");
         JButton multiply = new JButton("Multiply");
         JButton divide = new JButton("Divide");
+        ArrayList<TreeMap<BigDecimal, Double>> data = new ArrayList<>();
+        data.add(null);
+        data.add(null);
+        selectButton.addActionListener(e -> {
+            ArrayList<TreeMap<BigDecimal, Double>> temp = getDataFromFiles(pane);
+            data.set(0, temp.get(0));
+            data.set(1, temp.get(1));
+        });
         add.addActionListener(e -> {
-            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
             TreeMap<BigDecimal, Double> result = Operator.Addition(data.get(0), data.get(1));
             Utils.drawSignal("Addition", result);
         });
         substract.addActionListener(e -> {
-            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
             TreeMap<BigDecimal, Double> result = Operator.Subtraction(data.get(0), data.get(1));
             Utils.drawSignal("Subtraction", result);
         });
         multiply.addActionListener(e -> {
-            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
             TreeMap<BigDecimal, Double> result = Operator.Multiplication(data.get(0), data.get(1));
             Utils.drawSignal("Multiplication", result);
         });
         divide.addActionListener(e -> {
-            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
             TreeMap<BigDecimal, Double> result = Operator.Division(data.get(0), data.get(1));
             Utils.drawSignal("Division", result);
         });
-        buttonPane.add(add);
-        buttonPane.add(substract);
-        buttonPane.add(multiply);
-        buttonPane.add(divide);
+        buttonPane2.add(selectButton);
+        buttonPane2.add(add);
+        buttonPane2.add(substract);
+        buttonPane2.add(multiply);
+        buttonPane2.add(divide);
+        mainButtonPane.add(buttonPane1, BorderLayout.PAGE_START);
+        mainButtonPane.add(buttonPane2, BorderLayout.PAGE_END);
         // endregion
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
-        pane.add(buttonPane, BorderLayout.PAGE_END);
-    }
-
-    public void itemStateChanged(ItemEvent evt) {
-        CardLayout cl = (CardLayout)(cards.getLayout());
-        cl.show(cards, (String)evt.getItem());
+        pane.add(mainButtonPane, BorderLayout.PAGE_END);
     }
 
     private ArrayList<TreeMap<BigDecimal, Double>> getDataFromFiles(Container pane){
@@ -257,6 +261,11 @@ public class App implements ItemListener {
         ret.add(left.data);
         ret.add(right.data);
         return ret;
+    }
+
+    public void itemStateChanged(ItemEvent evt) {
+        CardLayout cl = (CardLayout)(cards.getLayout());
+        cl.show(cards, (String)evt.getItem());
     }
 
     private static void createAndShowGUI() {
