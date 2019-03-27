@@ -1,17 +1,22 @@
 package gui;
 
 import Calculations.Calculator;
+import Calculations.Operator;
 import Charts.Utils;
 import Signals.*;
+import serialization.Serialization;
+import serialization.SerializationModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -175,7 +180,7 @@ public class App implements ItemListener {
             cards.add(cardsArray.elementAt(i), comboBoxItems[i]);
         }
 
-        // region create save buttons
+        // region create save and math buttons
         JPanel buttonPane = new JPanel();
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
@@ -187,6 +192,35 @@ public class App implements ItemListener {
         });
         buttonPane.add(save);
         buttonPane.add(load);
+        
+        JButton add = new JButton("Add");
+        JButton substract = new JButton("Substract");
+        JButton multiply = new JButton("Multiply");
+        JButton divide = new JButton("Divide");
+        add.addActionListener(e -> {
+            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
+            TreeMap<BigDecimal, Double> result = Operator.Addition(data.get(0), data.get(1));
+            Utils.drawSignal("Addition", result);
+        });
+        substract.addActionListener(e -> {
+            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
+            TreeMap<BigDecimal, Double> result = Operator.Subtraction(data.get(0), data.get(1));
+            Utils.drawSignal("Subtraction", result);
+        });
+        multiply.addActionListener(e -> {
+            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
+            TreeMap<BigDecimal, Double> result = Operator.Multiplication(data.get(0), data.get(1));
+            Utils.drawSignal("Multiplication", result);
+        });
+        divide.addActionListener(e -> {
+            ArrayList<TreeMap<BigDecimal, Double>> data = getDataFromFiles(pane);
+            TreeMap<BigDecimal, Double> result = Operator.Division(data.get(0), data.get(1));
+            Utils.drawSignal("Division", result);
+        });
+        buttonPane.add(add);
+        buttonPane.add(substract);
+        buttonPane.add(multiply);
+        buttonPane.add(divide);
         // endregion
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -197,6 +231,32 @@ public class App implements ItemListener {
     public void itemStateChanged(ItemEvent evt) {
         CardLayout cl = (CardLayout)(cards.getLayout());
         cl.show(cards, (String)evt.getItem());
+    }
+
+    private ArrayList<TreeMap<BigDecimal, Double>> getDataFromFiles(Container pane){
+        SerializationModel left = null;
+        SerializationModel right = null;
+        ArrayList<TreeMap<BigDecimal, Double>> ret = new ArrayList<>();
+        final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        int returnVal = fc.showOpenDialog(pane);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            try {
+                left = (SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath());
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        returnVal = fc.showOpenDialog(pane);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            try {
+                right = (SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath());
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        ret.add(left.data);
+        ret.add(right.data);
+        return ret;
     }
 
     private static void createAndShowGUI() {
