@@ -3,12 +3,6 @@ package gui;
 import Calculations.Calculator;
 import Charts.Utils;
 import Signals.*;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,40 +31,6 @@ public class App implements ItemListener {
 
     private TreeMap<BigDecimal, Double> currentData;
 
-    private void showChart(JFreeChart chart){
-        JFrame chartFrame = new JFrame();
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartFrame.add(chartPanel);
-        chartFrame.pack();
-        chartFrame.setVisible(true);
-    }
-
-    private void drawSignal(String name, TreeMap<BigDecimal, Double> map) {
-        XYDataset dataset = Utils.createDatasetSignal(map);
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                name, "t[s]", "A",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true, true, false
-        );
-        showChart(chart);
-    }
-
-    private void drawHistogram(String name, TreeMap<BigDecimal, Double> map) {
-
-        int BINS = 20;
-        HistogramDataset dataset = Utils.createDatasetHistogram(map, BINS);
-        if (map.size() > 0) {
-            JFreeChart chart = ChartFactory.createHistogram(
-                    name, "value", "frequency",
-                    dataset,
-                    PlotOrientation.VERTICAL,
-                    false, true, false
-            );
-            showChart(chart);
-        }
-    }
-
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
         GroupLayout layout = new GroupLayout(card);
@@ -86,7 +46,7 @@ public class App implements ItemListener {
         layout.setHorizontalGroup(mainHorizontal);
 
         // region create input fields
-        JLabel label = new JLabel("Required fields: " + String.join(", ", names));
+        JLabel label = new JLabel("Required fields: " + String.join(", ", names) + ", fs");
         mainVertical.addComponent(label);
         mainHorizontal.addComponent(label, GroupLayout.Alignment.CENTER);
         GroupLayout.ParallelGroup inputFieldsVertical = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
@@ -97,6 +57,9 @@ public class App implements ItemListener {
             inputFieldsVertical.addComponent(fields[i]);
             inputFieldsHorizontal.addComponent(fields[i]);
         }
+        JTextField fsTextField = new JTextField("fs");
+        inputFieldsVertical.addComponent(fsTextField);
+        inputFieldsHorizontal.addComponent(fsTextField);
         mainVertical.addGroup(inputFieldsVertical);
         mainHorizontal.addGroup(inputFieldsHorizontal);
         // endregion
@@ -150,14 +113,14 @@ public class App implements ItemListener {
 
             assert finalSignal != null;
             finalSignal.setAllFields(params);
-            TreeMap<BigDecimal, Double> data = finalSignal.generate();
+            TreeMap<BigDecimal, Double> data = finalSignal.generate(Double.parseDouble(fsTextField.getText()));
             currentData = data;
 
-            drawSignal(signalClass.getSimpleName(), data);
+            Utils.drawSignal(signalClass.getSimpleName(), data);
             if( d != -1 && T != -1 ){
                 data = Calculator.Trim(new BigDecimal(d), new BigDecimal(T), data);
             }
-            drawHistogram(signalClass.getSimpleName(), data);
+            Utils.drawHistogram(signalClass.getSimpleName(), data);
             DecimalFormat dc = new DecimalFormat("0.00000");
             dc.setRoundingMode(RoundingMode.CEILING);
             mean.setText(dc.format(Calculator.Mean(data)));

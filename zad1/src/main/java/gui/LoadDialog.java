@@ -1,5 +1,6 @@
 package gui;
 
+import Charts.Utils;
 import serialization.Serialization;
 import serialization.SerializationModel;
 
@@ -45,14 +46,16 @@ public class LoadDialog extends JDialog {
     }
 
     private void onOK() {
+        SerializationModel model = null;
         try {
-            SerializationModel model = (SerializationModel)Serialization.Deserialize(loadTextField.getText());
+            model = (SerializationModel)Serialization.Deserialize(loadTextField.getText());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         dispose();
+        Utils.drawSignal("name", model.data);
     }
 
     private void onCancel() {
