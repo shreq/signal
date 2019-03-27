@@ -30,6 +30,7 @@ public class App implements ItemListener {
     private final static String SIGNAL10 = "NoiseImpulse";
 
     private TreeMap<BigDecimal, Double> currentData;
+    private double currentFs;
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
@@ -114,6 +115,7 @@ public class App implements ItemListener {
             assert finalSignal != null;
             finalSignal.setAllFields(params);
             TreeMap<BigDecimal, Double> data = finalSignal.generate(Double.parseDouble(fsTextField.getText()));
+            currentFs = Double.parseDouble(fsTextField.getText());
             currentData = data;
 
             Utils.drawSignal(signalClass.getSimpleName(), data);
@@ -178,7 +180,7 @@ public class App implements ItemListener {
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
         save.addActionListener(e -> {
-            SaveDialog.showDialog(currentData);
+            SaveDialog.showDialog(currentData, currentFs);
         });
         load.addActionListener(e -> {
             LoadDialog.showDialog();
