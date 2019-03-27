@@ -7,6 +7,10 @@ import java.util.TreeMap;
 public class Operator {
 
     public static TreeMap<BigDecimal, Double> Addition(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
+        if (!a.firstKey().equals(b.firstKey()) && !a.lastKey().equals(b.lastKey())) {
+            return null;
+        }
+
         TreeMap<BigDecimal, Double> result = new TreeMap<>(a);
 
         for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
@@ -18,10 +22,18 @@ public class Operator {
     }
 
     public static TreeMap<BigDecimal, Double> Subtraction(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
+        if (a.firstKey().doubleValue() != b.firstKey().doubleValue() && a.lastKey().doubleValue() != b.lastKey().doubleValue()) {
+            return null;
+        }
+
         return Addition(a, Multiplication(b, -1));
     }
 
     public static TreeMap<BigDecimal, Double> Multiplication(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
+        if (a.firstKey().doubleValue() != b.firstKey().doubleValue() && a.lastKey().doubleValue() != b.lastKey().doubleValue()) {
+            return null;
+        }
+
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
         for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
@@ -46,6 +58,10 @@ public class Operator {
     }
 
     public static TreeMap<BigDecimal, Double> Division(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
+        if (a.firstKey().doubleValue() != b.firstKey().doubleValue() && a.lastKey().doubleValue() != b.lastKey().doubleValue()) {
+            return null;
+        }
+
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
         for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
@@ -57,10 +73,10 @@ public class Operator {
             Double d = result.get(e.getKey());
             if (e.getValue() != 0) {
                 result.put(e.getKey(), d == null ? 0.0 : d / e.getValue());
-            }
+            }/*
             else {
                 result.put(e.getKey(), (double) Float.MAX_VALUE);
-            }
+            }*/
         }
 
         return result;

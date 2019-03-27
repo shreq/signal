@@ -196,7 +196,7 @@ public class App implements ItemListener {
         buttonPane1.add(load);
         JButton selectButton = new JButton("Select signals");
         JButton add = new JButton("Add");
-        JButton substract = new JButton("Substract");
+        JButton subtract = new JButton("Subtract");
         JButton multiply = new JButton("Multiply");
         JButton divide = new JButton("Divide");
         ArrayList<TreeMap<BigDecimal, Double>> data = new ArrayList<>();
@@ -211,7 +211,7 @@ public class App implements ItemListener {
             TreeMap<BigDecimal, Double> result = Operator.Addition(data.get(0), data.get(1));
             Utils.drawSignal("Addition", result);
         });
-        substract.addActionListener(e -> {
+        subtract.addActionListener(e -> {
             TreeMap<BigDecimal, Double> result = Operator.Subtraction(data.get(0), data.get(1));
             Utils.drawSignal("Subtraction", result);
         });
@@ -225,7 +225,7 @@ public class App implements ItemListener {
         });
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
-        buttonPane2.add(substract);
+        buttonPane2.add(subtract);
         buttonPane2.add(multiply);
         buttonPane2.add(divide);
         mainButtonPane.add(buttonPane1, BorderLayout.PAGE_START);
