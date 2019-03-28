@@ -303,7 +303,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(800, 220);
+        frame.setSize(750, 220);
         frame.setVisible(true);
     }
 
