@@ -55,7 +55,8 @@ public class LoadDialog extends JDialog {
             e.printStackTrace();
         }
         dispose();
-        Utils.drawSignal("name", model.data);
+        Utils.drawSignal(model.name, model.data);
+        Utils.drawHistogram(model.name, model.data);
     }
 
     private void onCancel() {

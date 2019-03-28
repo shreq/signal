@@ -36,6 +36,7 @@ public class App implements ItemListener {
 
     private TreeMap<BigDecimal, Double> currentData;
     private double currentFs;
+    private String curretName;
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
@@ -44,12 +45,12 @@ public class App implements ItemListener {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        // create main vertical group
+        // region create main GroupLayout groups
         GroupLayout.SequentialGroup mainVertical = layout.createSequentialGroup();
         layout.setVerticalGroup(mainVertical);
-        // create main horizontal group
         GroupLayout.ParallelGroup mainHorizontal = layout.createParallelGroup();
         layout.setHorizontalGroup(mainHorizontal);
+        // endregion
 
         // region create input fields
         JLabel label = new JLabel("Required fields: " + String.join(", ", names) + ", fs");
@@ -120,8 +121,6 @@ public class App implements ItemListener {
             assert finalSignal != null;
             finalSignal.setAllFields(params);
             TreeMap<BigDecimal, Double> data = finalSignal.generate(Double.parseDouble(fsTextField.getText()));
-            currentFs = Double.parseDouble(fsTextField.getText());
-            currentData = data;
 
             Utils.drawSignal(signalClass.getSimpleName(), data);
             if( d != -1 && T != -1 ){
@@ -135,6 +134,9 @@ public class App implements ItemListener {
             rootMeanSqr.setText(dc.format(Calculator.RootMeanSquare(data)));
             variance.setText(dc.format(Calculator.Variance(data)));
             avgPower.setText(dc.format(Calculator.AvgPower(data)));
+            currentFs = Double.parseDouble(fsTextField.getText());
+            currentData = data;
+            curretName = signalClass.getSimpleName();
         });
         // endregion
         return card;
@@ -186,12 +188,8 @@ public class App implements ItemListener {
         JPanel buttonPane2 = new JPanel();
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
-        save.addActionListener(e -> {
-            SaveDialog.showDialog(currentData, currentFs);
-        });
-        load.addActionListener(e -> {
-            LoadDialog.showDialog();
-        });
+        save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, curretName));
+        load.addActionListener(e -> LoadDialog.showDialog());
         buttonPane1.add(save);
         buttonPane1.add(load);
         JButton selectButton = new JButton("Select signals");
@@ -199,29 +197,45 @@ public class App implements ItemListener {
         JButton subtract = new JButton("Subtract");
         JButton multiply = new JButton("Multiply");
         JButton divide = new JButton("Divide");
-        ArrayList<TreeMap<BigDecimal, Double>> data = new ArrayList<>();
+        ArrayList<SerializationModel> data = new ArrayList<>();
         data.add(null);
         data.add(null);
         selectButton.addActionListener(e -> {
-            ArrayList<TreeMap<BigDecimal, Double>> temp = getDataFromFiles(pane);
+            ArrayList<SerializationModel> temp = getDataFromFiles(pane);
             data.set(0, temp.get(0));
             data.set(1, temp.get(1));
         });
         add.addActionListener(e -> {
-            TreeMap<BigDecimal, Double> result = Operator.Addition(data.get(0), data.get(1));
-            Utils.drawSignal("Addition", result);
+            TreeMap<BigDecimal, Double> result = Operator.Addition(data.get(0).data, data.get(1).data);
+            Utils.drawSignal(data.get(0).name + " + " + data.get(1).name, result);
+            Utils.drawHistogram(data.get(0).name + " + " + data.get(1).name, result);
+            SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
+                    result, (data.get(0).name + " + " + data.get(1).name));
+            saveOperationOutput(resultModel, (data.get(0).name + " plus " + data.get(1).name).replace(" ", "_"));
         });
         subtract.addActionListener(e -> {
-            TreeMap<BigDecimal, Double> result = Operator.Subtraction(data.get(0), data.get(1));
-            Utils.drawSignal("Subtraction", result);
+            TreeMap<BigDecimal, Double> result = Operator.Subtraction(data.get(0).data, data.get(1).data);
+            Utils.drawSignal(data.get(0).name + " - " + data.get(1).name, result);
+            Utils.drawHistogram(data.get(0).name + " - " + data.get(1).name, result);
+            SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
+                    result, (data.get(0).name + " - " + data.get(1).name));
+            saveOperationOutput(resultModel, (data.get(0).name + " minus " + data.get(1).name).replace(" ", "_"));
         });
         multiply.addActionListener(e -> {
-            TreeMap<BigDecimal, Double> result = Operator.Multiplication(data.get(0), data.get(1));
-            Utils.drawSignal("Multiplication", result);
+            TreeMap<BigDecimal, Double> result = Operator.Multiplication(data.get(0).data, data.get(1).data);
+            Utils.drawSignal(data.get(0).name + " * " + data.get(1).name, result);
+            Utils.drawHistogram(data.get(0).name + " * " + data.get(1).name, result);
+            SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
+                    result, (data.get(0).name + " * " + data.get(1).name));
+            saveOperationOutput(resultModel, (data.get(0).name + " multiply " + data.get(1).name).replace(" ", "_"));
         });
         divide.addActionListener(e -> {
-            TreeMap<BigDecimal, Double> result = Operator.Division(data.get(0), data.get(1));
-            Utils.drawSignal("Division", result);
+            TreeMap<BigDecimal, Double> result = Operator.Division(data.get(0).data, data.get(1).data);
+            Utils.drawSignal(data.get(0).name + " / " + data.get(1).name, result);
+            Utils.drawHistogram(data.get(0).name + " / " + data.get(1).name, result);
+            SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
+                    result, (data.get(0).name + " / " + data.get(1).name));
+            saveOperationOutput(resultModel, (data.get(0).name + " divide " + data.get(1).name).replace(" ", "_"));
         });
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
@@ -237,15 +251,21 @@ public class App implements ItemListener {
         pane.add(mainButtonPane, BorderLayout.PAGE_END);
     }
 
-    private ArrayList<TreeMap<BigDecimal, Double>> getDataFromFiles(Container pane){
-        SerializationModel left = null;
-        SerializationModel right = null;
-        ArrayList<TreeMap<BigDecimal, Double>> ret = new ArrayList<>();
+    private void saveOperationOutput(SerializationModel model, String fileName){
+        try {
+            Serialization.Serialize(model, System.getProperty("user.dir") + "/" + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ArrayList<SerializationModel> getDataFromFiles(Container pane){
+        ArrayList<SerializationModel> ret = new ArrayList<>();
         final JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         int returnVal = fc.showOpenDialog(pane);
         if(returnVal == JFileChooser.APPROVE_OPTION){
             try {
-                left = (SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath());
+                ret.add((SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath()));
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
@@ -253,13 +273,11 @@ public class App implements ItemListener {
         returnVal = fc.showOpenDialog(pane);
         if(returnVal == JFileChooser.APPROVE_OPTION){
             try {
-                right = (SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath());
+                ret.add((SerializationModel)Serialization.Deserialize(fc.getSelectedFile().getAbsolutePath()));
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
         }
-        ret.add(left.data);
-        ret.add(right.data);
         return ret;
     }
 

@@ -22,10 +22,12 @@ public class SaveDialog extends JDialog {
 
     private TreeMap<BigDecimal, Double> data;
     private double fs;
+    private String name;
 
-    public SaveDialog(TreeMap<BigDecimal, Double> _data, double _fs) {
+    public SaveDialog(TreeMap<BigDecimal, Double> _data, double _fs, String _name) {
         fs = _fs;
         data = _data;
+        name = _name;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -68,7 +70,7 @@ public class SaveDialog extends JDialog {
             JOptionPane.showMessageDialog(null, "Invalid sampling frequency");
             return;
         }
-        SerializationModel model = new SerializationModel(data.firstKey().doubleValue(), sample, data);
+        SerializationModel model = new SerializationModel(data.firstKey().doubleValue(), sample, data, name);
         try {
             Serialization.Serialize(model, filenameTextField.getText());
         } catch (IOException e) {
@@ -90,13 +92,13 @@ public class SaveDialog extends JDialog {
         }
     }
 
-    public static void showDialog(TreeMap<BigDecimal, Double> _data, double _fs) {
+    public static void showDialog(TreeMap<BigDecimal, Double> _data, double _fs, String _name) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-        SaveDialog dialog = new SaveDialog(_data, _fs);
+        SaveDialog dialog = new SaveDialog(_data, _fs, _name);
         dialog.pack();
         dialog.setVisible(true);
     }
