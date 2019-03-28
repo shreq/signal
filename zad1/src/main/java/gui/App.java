@@ -36,10 +36,11 @@ public class App implements ItemListener {
     private final static String SIGNAL8 = "SignalTriangular";
     private final static String SIGNAL9 = "StepUnit";
     private final static String SIGNAL10 = "NoiseImpulse";
+    private final static String SIGNAL11 = "ImpulseUnit";
 
     private TreeMap<BigDecimal, Double> currentData;
     private double currentFs;
-    private String curretName;
+    private String currentName;
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
         JPanel card = new JPanel();
@@ -139,7 +140,7 @@ public class App implements ItemListener {
             avgPower.setText(dc.format(Calculator.AvgPower(data)));
             currentFs = Double.parseDouble(fsTextField.getText());
             currentData = data;
-            curretName = signalClass.getSimpleName();
+            currentName = signalClass.getSimpleName();
         });
         // endregion
         return card;
@@ -148,7 +149,7 @@ public class App implements ItemListener {
     private void addComponentToPane(Container pane) {
 
         JPanel comboBoxPane = new JPanel();
-        String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10};
+        String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10, SIGNAL11};
         JComboBox<String> cb = new JComboBox<>(comboBoxItems);
         cb.setEditable(false);
         cb.addItemListener(this);
@@ -176,6 +177,8 @@ public class App implements ItemListener {
         cardsArray.add(createCard(StepUnit.class, "A", "t1", "d", "ts"));
         // NoiseImpulse
         cardsArray.add(createCard(NoiseImpulse.class, "A", "t1", "d", "f", "p"));
+        // ImpulseUnit
+        cardsArray.add(createCard(ImpulseUnit.class, "A", "ns", "n1", "f"));
         // endregion
 
         // create the panel that contains the cards
@@ -192,7 +195,7 @@ public class App implements ItemListener {
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
         JButton saveText = new JButton("Save Text");
-        save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, curretName));
+        save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, currentName));
         load.addActionListener(e -> {
             LoadDialog dialog = new LoadDialog();
             dialog.pack();
@@ -274,9 +277,9 @@ public class App implements ItemListener {
 
     private void saveToTextFile(){
         if(currentData == null) return;
-        try (PrintWriter out = new PrintWriter(System.getProperty("user.dir") + "/" + curretName + ".txt")) {
+        try (PrintWriter out = new PrintWriter(System.getProperty("user.dir") + "/" + currentName + ".txt")) {
             String output = "";
-            out.println("Signal name: " + curretName);
+            out.println("Signal name: " + currentName);
             out.println("Sampling frequecy: " + currentFs + "\n\n");
             out.println("Data: " + "\nX\tY");
             for (Map.Entry<BigDecimal, Double> entry : currentData.entrySet()) {
@@ -290,7 +293,7 @@ public class App implements ItemListener {
 
     private void setModelAsCurrent(SerializationModel model){
         if(model == null) return;
-        curretName = model.name;
+        currentName = model.name;
         currentFs = model.fs;
         currentData = model.data;
     }

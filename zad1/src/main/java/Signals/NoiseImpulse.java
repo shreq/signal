@@ -11,7 +11,7 @@ public class NoiseImpulse implements Signal {
     public double A;        // amplitude
     public BigDecimal t1;   // time start
     public BigDecimal d;    // signal duration
-    public double f;        // frequency       // ? ? ?
+    public double f;        // frequency
     public double p;        // probability
 
     public NoiseImpulse(){}
@@ -43,6 +43,8 @@ public class NoiseImpulse implements Signal {
 
     @Override
     public TreeMap<BigDecimal, Double> generate(BigDecimal fs) {
+        fs = new BigDecimal(f);
+
         TreeMap<BigDecimal, Double> map = new TreeMap<>();
 
         BigDecimal tx = t1.add(d);
