@@ -10,30 +10,28 @@ public class ImpulseUnit implements Signal {
     public BigDecimal ns;   // number of sample where step occurs
     public BigDecimal n1;   // time range
     //public double l;        // ?
-    public double f;        // frequency
+    public double d;        // duration
 
     public ImpulseUnit(){}
 
-    public ImpulseUnit(double A, BigDecimal ns, BigDecimal n1,/* double l,*/ double f) {
+    public ImpulseUnit(double A, BigDecimal ns, BigDecimal n1,/* double l,*/ double d) {
         this.A = A;
         this.ns = ns;
         this.n1 = n1;
         //this.l = l;
-        this.f = f;
+        this.d = d;
     }
 
     @Override
     public TreeMap<BigDecimal, Double> generate(BigDecimal fs) {
-        fs = new BigDecimal(f);
 
         TreeMap<BigDecimal, Double> map = new TreeMap<>();
 
-        BigDecimal tx = n1;
+        BigDecimal end = new BigDecimal(d);
         BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
-        for (BigDecimal t = n1.negate(); t.compareTo(tx) <= 0; t = t.add(Ts)) {
-            map.put(t, (t.compareTo(t.subtract(ns)) == 0 ? A : 0.0));
+        for (BigDecimal t = n1.negate(); t.compareTo(end) <= 0; t = t.add(Ts)) {
+            map.put(t, (t.subtract(ns).compareTo(BigDecimal.ZERO)) == 0 ? A : 0.0);
         }
-
         return map;
     }
 
@@ -53,6 +51,6 @@ public class ImpulseUnit implements Signal {
         this.ns = new BigDecimal(params[1]);
         this.n1 = new BigDecimal(params[2]);
         //this.l = params[3];
-        this.f = params[3];
+        this.d = params[3];
     }
 }

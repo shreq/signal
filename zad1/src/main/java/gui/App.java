@@ -176,9 +176,9 @@ public class App implements ItemListener {
         // StepUnit
         cardsArray.add(createCard(StepUnit.class, "A", "t1", "d", "ts"));
         // NoiseImpulse
-        cardsArray.add(createCard(NoiseImpulse.class, "A", "t1", "d", "f", "p"));
+        cardsArray.add(createCard(NoiseImpulse.class, "A", "t1", "d", "p"));
         // ImpulseUnit
-        cardsArray.add(createCard(ImpulseUnit.class, "A", "ns", "n1", "f"));
+        cardsArray.add(createCard(ImpulseUnit.class, "A", "ns", "n1", "d"));
         // endregion
 
         // create the panel that contains the cards

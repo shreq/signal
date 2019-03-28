@@ -11,24 +11,21 @@ public class NoiseImpulse implements Signal {
     public double A;        // amplitude
     public BigDecimal t1;   // time start
     public BigDecimal d;    // signal duration
-    public double f;        // frequency
     public double p;        // probability
 
     public NoiseImpulse(){}
 
-    public NoiseImpulse(double A, BigDecimal t1, BigDecimal d, double f, double p) {
+    public NoiseImpulse(double A, BigDecimal t1, BigDecimal d, double p) {
         this.A = A;
         this.t1 = t1;
         this.d = d;
-        this.f = f;
         this.p = p;
     }
 
-    public NoiseImpulse(double A, double t1, double d, double f, double p) {
+    public NoiseImpulse(double A, double t1, double d, double p) {
         this.A = A;
         this.t1 = new BigDecimal(t1);
         this.d = new BigDecimal(d);
-        this.f = f;
         this.p = p;
     }
 
@@ -37,13 +34,11 @@ public class NoiseImpulse implements Signal {
         this.A = params[0];
         this.t1 = new BigDecimal(params[1]);
         this.d = new BigDecimal(params[2]);
-        this.f = params[3];
-        this.p = params[4];
+        this.p = params[3];
     }
 
     @Override
     public TreeMap<BigDecimal, Double> generate(BigDecimal fs) {
-        fs = new BigDecimal(f);
 
         TreeMap<BigDecimal, Double> map = new TreeMap<>();
 
