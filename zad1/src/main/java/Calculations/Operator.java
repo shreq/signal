@@ -15,7 +15,12 @@ public class Operator {
 
         for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
             Double d = result.get(e.getKey());
-            result.put(e.getKey(), e.getValue() + (d == null ? 0.0 : d));
+            if (e.getValue() != null) {
+                result.put(e.getKey(), e.getValue() + (d == null ? 0.0 : d));
+            }
+            else {
+                result.remove(e.getKey());
+            }
         }
 
         return result;
@@ -34,12 +39,12 @@ public class Operator {
             return null;
         }
 
-        TreeMap<BigDecimal, Double> result = new TreeMap<>();
+        TreeMap<BigDecimal, Double> result = new TreeMap<>(a);
 
-        for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
+        /*for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
             Double d = b.get(e.getKey());
             result.put(e.getKey(), d == null ? 0.0 : e.getValue());
-        }
+        }*/
 
         for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
             Double d = result.get(e.getKey());
@@ -49,12 +54,19 @@ public class Operator {
         return result;
     }
 
-    public static TreeMap<BigDecimal, Double> Multiplication(TreeMap<BigDecimal, Double> a, double multiplier) {
+    private static TreeMap<BigDecimal, Double> Multiplication(TreeMap<BigDecimal, Double> a, double multiplier) {
+        TreeMap<BigDecimal, Double> result = new TreeMap<>(a);
+
         for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
-            a.put(e.getKey(), multiplier * e.getValue());
+            if (e.getValue() != null) {
+                result.put(e.getKey(), multiplier * e.getValue());
+            }
+            else {
+                result.remove(e.getKey());
+            }
         }
 
-        return a;
+        return result;
     }
 
     public static TreeMap<BigDecimal, Double> Division(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
@@ -71,12 +83,14 @@ public class Operator {
 
         for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
             Double d = result.get(e.getKey());
-            if (e.getValue() != 0) {
+            if (e.getValue() != null && e.getValue() != 0.0) {
                 result.put(e.getKey(), d == null ? 0.0 : d / e.getValue());
-            }/*
+            }
             else {
-                result.put(e.getKey(), (double) Float.MAX_VALUE);
-            }*/
+                result.remove(e.getKey());
+            }
+
+            //result.put(e.getKey(), d == null || e.getValue() == 0 ? 0.0 : d / e.getValue());
         }
 
         return result;

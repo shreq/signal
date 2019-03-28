@@ -1,7 +1,5 @@
 package Calculations;
 
-import Signals.*;
-
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.TreeMap;
@@ -44,13 +42,7 @@ public class Calculator {
     }
 
     public static double RootMeanSquare(TreeMap<BigDecimal, Double> a) {
-        double sum = 0.0;
-
-        for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
-            sum += e.getValue() * e.getValue();
-        }
-
-        return Math.sqrt(sum / a.size());
+        return Math.sqrt(AvgPower(a));
     }
 
     public static double Variance(TreeMap<BigDecimal, Double> a) {
@@ -65,6 +57,12 @@ public class Calculator {
     }
 
     public static double AvgPower(TreeMap<BigDecimal, Double> a) {
-        return 0;
+        double sum = 0.0;
+
+        for (Map.Entry<BigDecimal, Double> e : a.entrySet()) {
+            sum += e.getValue() * e.getValue();
+        }
+
+        return sum / a.size();
     }
 }
