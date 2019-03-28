@@ -11,12 +11,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -188,10 +191,18 @@ public class App implements ItemListener {
         JPanel buttonPane2 = new JPanel();
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
+        JButton saveText = new JButton("Save Text");
         save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, curretName));
-        load.addActionListener(e -> LoadDialog.showDialog());
+        load.addActionListener(e -> {
+            LoadDialog dialog = new LoadDialog();
+            dialog.pack();
+            dialog.setVisible(true);
+            setModelAsCurrent(dialog.getModel());
+        });
+        saveText.addActionListener(e -> saveToTextFile());
         buttonPane1.add(save);
         buttonPane1.add(load);
+        buttonPane1.add(saveText);
         JButton selectButton = new JButton("Select signals");
         JButton add = new JButton("Add");
         JButton subtract = new JButton("Subtract");
@@ -212,6 +223,7 @@ public class App implements ItemListener {
             SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
                     result, (data.get(0).name + " + " + data.get(1).name));
             saveOperationOutput(resultModel, (data.get(0).name + " plus " + data.get(1).name).replace(" ", "_"));
+            setModelAsCurrent(resultModel);
         });
         subtract.addActionListener(e -> {
             TreeMap<BigDecimal, Double> result = Operator.Subtraction(data.get(0).data, data.get(1).data);
@@ -220,6 +232,7 @@ public class App implements ItemListener {
             SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
                     result, (data.get(0).name + " - " + data.get(1).name));
             saveOperationOutput(resultModel, (data.get(0).name + " minus " + data.get(1).name).replace(" ", "_"));
+            setModelAsCurrent(resultModel);
         });
         multiply.addActionListener(e -> {
             TreeMap<BigDecimal, Double> result = Operator.Multiplication(data.get(0).data, data.get(1).data);
@@ -228,6 +241,7 @@ public class App implements ItemListener {
             SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
                     result, (data.get(0).name + " * " + data.get(1).name));
             saveOperationOutput(resultModel, (data.get(0).name + " multiply " + data.get(1).name).replace(" ", "_"));
+            setModelAsCurrent(resultModel);
         });
         divide.addActionListener(e -> {
             TreeMap<BigDecimal, Double> result = Operator.Division(data.get(0).data, data.get(1).data);
@@ -236,6 +250,7 @@ public class App implements ItemListener {
             SerializationModel resultModel = new SerializationModel(result.firstKey().doubleValue(), data.get(0).fs,
                     result, (data.get(0).name + " / " + data.get(1).name));
             saveOperationOutput(resultModel, (data.get(0).name + " divide " + data.get(1).name).replace(" ", "_"));
+            setModelAsCurrent(resultModel);
         });
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
@@ -255,6 +270,29 @@ public class App implements ItemListener {
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
         pane.add(mainBottomPane, BorderLayout.PAGE_END);
+    }
+
+    private void saveToTextFile(){
+        if(currentData == null) return;
+        try (PrintWriter out = new PrintWriter(System.getProperty("user.dir") + "/" + curretName + ".txt")) {
+            String output = "";
+            out.println("Signal name: " + curretName);
+            out.println("Sampling frequecy: " + currentFs + "\n\n");
+            out.println("Data: " + "\nX\tY");
+            for (Map.Entry<BigDecimal, Double> entry : currentData.entrySet()) {
+                if(entry.getValue() == null) continue;
+                out.println(entry.getKey() + "\t" + entry.getValue());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setModelAsCurrent(SerializationModel model){
+        if(model == null) return;
+        curretName = model.name;
+        currentFs = model.fs;
+        currentData = model.data;
     }
 
     private void saveOperationOutput(SerializationModel model, String fileName){
@@ -303,7 +341,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(700, 220);
+        frame.setSize(750, 220);
         frame.setVisible(true);
     }
 
