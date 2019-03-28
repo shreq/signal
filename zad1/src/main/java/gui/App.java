@@ -183,7 +183,7 @@ public class App implements ItemListener {
         }
 
         // region create save and math buttons
-        JPanel mainButtonPane = new JPanel();
+        JPanel mainBottomPane = new JPanel();
         JPanel buttonPane1 = new JPanel();
         JPanel buttonPane2 = new JPanel();
         JButton save = new JButton("Save");
@@ -242,13 +242,19 @@ public class App implements ItemListener {
         buttonPane2.add(subtract);
         buttonPane2.add(multiply);
         buttonPane2.add(divide);
-        mainButtonPane.add(buttonPane1, BorderLayout.PAGE_START);
-        mainButtonPane.add(buttonPane2, BorderLayout.PAGE_END);
+        mainBottomPane.add(buttonPane1, BorderLayout.PAGE_START);
+        mainBottomPane.add(buttonPane2, BorderLayout.PAGE_END);
         // endregion
+        mainBottomPane.add(new JLabel("Histogram bins: "));
+        JTextField binsTextField = new JTextField("", 3);
+        binsTextField.addActionListener(e -> {
+            Utils.BINS = Integer.parseInt(binsTextField.getText());
+        });
+        mainBottomPane.add(binsTextField);
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
-        pane.add(mainButtonPane, BorderLayout.PAGE_END);
+        pane.add(mainBottomPane, BorderLayout.PAGE_END);
     }
 
     private void saveOperationOutput(SerializationModel model, String fileName){
@@ -297,7 +303,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(600, 220);
+        frame.setSize(700, 220);
         frame.setVisible(true);
     }
 

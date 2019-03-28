@@ -17,6 +17,8 @@ import java.util.TreeMap;
 
 public class Utils {
 
+    public static int BINS;
+
     public static XYDataset createDatasetSignal(Map<BigDecimal, Double> map) {
         XYSeries series = new XYSeries("");
         XYSeriesCollection dataset = new XYSeriesCollection();
@@ -58,7 +60,6 @@ public class Utils {
 
     public static void drawHistogram(String name, TreeMap<BigDecimal, Double> map) {
 
-        int BINS = 20;
         HistogramDataset dataset = Utils.createDatasetHistogram(map, BINS);
         if (map.size() > 0) {
             JFreeChart chart = ChartFactory.createHistogram(
