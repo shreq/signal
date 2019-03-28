@@ -1,6 +1,7 @@
 package gui;
 
 import Charts.Utils;
+import lombok.Getter;
 import serialization.Serialization;
 import serialization.SerializationModel;
 
@@ -15,6 +16,8 @@ public class LoadDialog extends JDialog {
     private JLabel loadLabel;
     private JTextField loadTextField;
     private JButton browseButton;
+    @Getter
+    private SerializationModel model;
 
     public LoadDialog() {
         setContentPane(contentPane);
@@ -46,7 +49,6 @@ public class LoadDialog extends JDialog {
     }
 
     private void onOK() {
-        SerializationModel model = null;
         try {
             model = (SerializationModel)Serialization.Deserialize(loadTextField.getText());
         } catch (ClassNotFoundException e) {
