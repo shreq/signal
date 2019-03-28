@@ -49,12 +49,25 @@ public class Utils {
 
     public static void drawSignal(String name, TreeMap<BigDecimal, Double> map) {
         XYDataset dataset = Utils.createDatasetSignal(map);
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                name, "t[s]", "A",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true, true, false
-        );
+        JFreeChart chart;
+
+        if (name.equals("ImpulseUnit") || name.equals("NoiseImpulse")) {
+            chart = ChartFactory.createScatterPlot(
+                    name, "t[s]", "A",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    true, true, false
+            );
+        }
+        else {
+            chart = ChartFactory.createXYLineChart(
+                    name, "t[s]", "A",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    true, true, false
+            );
+        }
+
         showChart(chart);
     }
 
