@@ -17,7 +17,7 @@ import java.util.TreeMap;
 
 public class Utils {
 
-    public static int BINS;
+    public static int BINS = 20;
 
     public static XYDataset createDatasetSignal(Map<BigDecimal, Double> map) {
         XYSeries series = new XYSeries("");

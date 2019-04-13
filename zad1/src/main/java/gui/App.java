@@ -2,6 +2,7 @@ package gui;
 
 import Calculations.Calculator;
 import Calculations.Operator;
+import Calculations.Quantizer;
 import Charts.Utils;
 import Signals.*;
 import serialization.Serialization;
@@ -64,11 +65,11 @@ public class App implements ItemListener {
         GroupLayout.SequentialGroup inputFieldsHorizontal = layout.createSequentialGroup();
         JTextField[] fields = new JTextField[names.length];
         for (int i = 0; i < names.length; i++) {
-            fields[i] = new JTextField(names[i], 4);
+            fields[i] = new JTextField();
             inputFieldsVertical.addComponent(fields[i]);
             inputFieldsHorizontal.addComponent(fields[i]);
         }
-        JTextField fsTextField = new JTextField("fs");
+        JTextField fsTextField = new JTextField();
         inputFieldsVertical.addComponent(fsTextField);
         inputFieldsHorizontal.addComponent(fsTextField);
         mainVertical.addGroup(inputFieldsVertical);
@@ -211,6 +212,7 @@ public class App implements ItemListener {
         JButton subtract = new JButton("Subtract");
         JButton multiply = new JButton("Multiply");
         JButton divide = new JButton("Divide");
+        JButton quantize = new JButton("Quantize");
         ArrayList<SerializationModel> data = new ArrayList<>();
         data.add(null);
         data.add(null);
@@ -255,16 +257,21 @@ public class App implements ItemListener {
             saveOperationOutput(resultModel, (data.get(0).name + " divide " + data.get(1).name).replace(" ", "_"));
             setModelAsCurrent(resultModel);
         });
+        quantize.addActionListener(e->{
+            TreeMap<BigDecimal, Double> result = Quantizer.quantize(currentData, 3);
+            Utils.drawSignal("Quanitzation", result);
+        });
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
         buttonPane2.add(subtract);
         buttonPane2.add(multiply);
         buttonPane2.add(divide);
+        buttonPane2.add(quantize);
         mainBottomPane.add(buttonPane1, BorderLayout.PAGE_START);
         mainBottomPane.add(buttonPane2, BorderLayout.PAGE_END);
         // endregion
         mainBottomPane.add(new JLabel("Histogram bins: "));
-        JTextField binsTextField = new JTextField("", 3);
+        JTextField binsTextField = new JTextField("20", 3);
         binsTextField.addActionListener(e -> {
             Utils.BINS = Integer.parseInt(binsTextField.getText());
         });
@@ -344,7 +351,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(750, 220);
+        frame.setSize(850, 220);
         frame.setVisible(true);
     }
 
