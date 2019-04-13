@@ -259,7 +259,11 @@ public class App implements ItemListener {
         });
         quantize.addActionListener(e->{
             TreeMap<BigDecimal, Double> result = Quantizer.quantize(currentData, 3);
-            Utils.drawSignal("Quanitzation", result);
+            DecimalFormat dc = new DecimalFormat("0.00000");
+            Utils.drawSignal("Quanitzation MSE: " + dc.format(Calculator.MeanSquareError(currentData, result)) +
+                    " SNR: " + dc.format(Calculator.MeanSquareError(currentData, result)) +
+                    " PSNR: " + dc.format(Calculator.MeanSquareError(currentData, result)) +
+                    " MD: " + dc.format(Calculator.MeanSquareError(currentData, result)), result);
         });
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
