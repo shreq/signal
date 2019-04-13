@@ -1,6 +1,7 @@
 package Calculations;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -64,5 +65,37 @@ public class Calculator {
         }
 
         return sum / a.size();
+    }
+
+    public static double MeanSquareError(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
+        double mse = 0;
+        for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
+            mse += (a.get(e.getKey()) - e.getValue()) * (a.get(e.getKey()) - e.getValue());
+        }
+        return mse / b.size();
+    }
+
+    public static double SignalNoiseRatio(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b) {
+        double up = 0, down = 0;
+        for (Map.Entry<BigDecimal, Double> e : b.entrySet()) {
+            up += a.get(e.getKey()) * a.get(e.getKey());
+            down += (a.get(e.getKey()) - e.getValue()) * (a.get(e.getKey()) - e.getValue());
+        }
+        return 10 * Math.log10(up / down);
+    }
+
+    public static double PeakSignalNoiseRatio(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b){
+        return 10 * Math.log10(Collections.max(a.values())/MeanSquareError(a, b));
+    }
+
+    public static double MaximumDifference(TreeMap<BigDecimal, Double> a, TreeMap<BigDecimal, Double> b){
+        double max = 0;
+        double buff = 0;
+        for (Map.Entry<BigDecimal, Double> e : b.entrySet()){
+            buff = Math.abs(a.get(e.getKey()) - e.getValue());
+            if(buff > max)
+                max = buff;
+        }
+        return max;
     }
 }
