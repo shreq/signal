@@ -258,7 +258,7 @@ public class App implements ItemListener {
             setModelAsCurrent(resultModel);
         });
         quantize.addActionListener(e->{
-            QuantizeDialog.showDialog(currentData);
+            QuantizeDialog.showDialog(currentData, currentFs, currentName);
         });
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
