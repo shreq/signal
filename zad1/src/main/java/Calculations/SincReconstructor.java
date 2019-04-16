@@ -37,4 +37,15 @@ public class SincReconstructor implements Reconstructor {
         return t == 0.0 ? 1.0 : Math.sin(Math.PI * t) / (Math.PI * t);
     }
 
+<<<<<<< HEAD
+=======
+    private double sinc(BigDecimal t) {
+        return sinc(t.doubleValue());
+    }
+
+    @Override
+    public double reconstruct(BigDecimal t, TreeMap<BigDecimal, Double> signal) {
+        return 0;
+    }
+>>>>>>> dfbf9960117f95241f31edba66974a81110c61a6
 }
