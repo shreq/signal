@@ -1,6 +1,5 @@
 package gui;
 
-import Calculations.Reconstructor;
 import Calculations.SincReconstructor;
 import Charts.Utils;
 
@@ -16,10 +15,12 @@ public class SincRecDialog extends JDialog {
     private JLabel radiusLabel;
     private JTextField radiusField;
     private TreeMap<BigDecimal, Double> data;
-    private Reconstructor reconstructor;
+    private double fs;
+    private SincReconstructor reconstructor;
 
-    public SincRecDialog(TreeMap<BigDecimal, Double> data) {
+    public SincRecDialog(TreeMap<BigDecimal, Double> data, double fs) {
         this.data = data;
+        this.fs = fs;
         this.reconstructor = new SincReconstructor();
         setContentPane(contentPane);
         setModal(true);
@@ -54,7 +55,7 @@ public class SincRecDialog extends JDialog {
     }
 
     private void onOK() {
-        TreeMap<BigDecimal, Double> result = reconstructor.reconstruct(data, Integer.parseInt(radiusField.getText()));
+        TreeMap<BigDecimal, Double> result = reconstructor.reconstruct(data, fs, Double.parseDouble(radiusField.getText()));
         Utils.drawSignal("Reconstrucred signal", result);
         dispose();
     }
@@ -64,13 +65,13 @@ public class SincRecDialog extends JDialog {
         dispose();
     }
 
-    public static void showDialog(TreeMap<BigDecimal, Double> _data){
+    public static void showDialog(TreeMap<BigDecimal, Double> _data, double _fs){
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-        SincRecDialog dialog = new SincRecDialog(_data);
+        SincRecDialog dialog = new SincRecDialog(_data, _fs);
         dialog.pack();
         dialog.setVisible(true);
     }

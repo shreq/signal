@@ -259,7 +259,7 @@ public class App implements ItemListener {
             setModelAsCurrent(resultModel);
         });
         quantize.addActionListener(e-> QuantizeDialog.showDialog(currentData, currentFs, currentName));
-        sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData));
+        sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData, currentFs));
         zeroHold.addActionListener(e-> ZeroOrderHoldDialog.showDialog(currentData, currentFs, currentName));
         buttonPane2.add(selectButton);
         buttonPane2.add(add);

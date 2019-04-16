@@ -1,24 +1,31 @@
 package Calculations;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-public class SincReconstructor implements Reconstructor {
+public class SincReconstructor{
 
-    @Override
-    public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, int radius) {
+    public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, double fs ,double k) {
+        double newfs = fs*k;
+        double duration = signal.lastKey().doubleValue();
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
-        BigDecimal[] keys = signal.keySet().toArray(new BigDecimal[0]);
-        Double[] values = signal.values().toArray(new Double[0]);
-        double Ts = keys[1].subtract(keys[0]).doubleValue();
-
-        for (int i = 0; i < values.length; i++) {
-            result.put(keys[i], sum(keys[i].doubleValue(), Ts, values, i, radius));
+        ArrayList<Double> interpolated = new ArrayList<>(Collections.nCopies((int) (duration * newfs), 0.0));
+        double step = duration/interpolated.size();
+        ArrayList<Double> time = new ArrayList<>();
+        for(int i=0; i<interpolated.size(); i++){
+            time.add(i*step*fs);
         }
-
+        for(double v : signal.values()){
+            for(int i = 0; i < interpolated.size(); i++){
+                interpolated.set(i, interpolated.get(i) + v * sinc(time.get(i)));
+                time.set(i, time.get(i) - 1);
+            }
+        }
+        double timeStep = (signal.lastKey().doubleValue() - signal.firstKey().doubleValue())/time.size();
+        for(int i = 0; i<time.size(); i++){
+            result.put(new BigDecimal(i*timeStep), interpolated.get(i));
+        }
         return result;
     }
 
