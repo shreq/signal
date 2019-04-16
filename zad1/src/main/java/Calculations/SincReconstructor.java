@@ -13,22 +13,22 @@ public class SincReconstructor implements Reconstructor {
 
         BigDecimal[] keys = signal.keySet().toArray(new BigDecimal[0]);
         Double[] values = signal.values().toArray(new Double[0]);
-        BigDecimal Ts = keys[1].subtract(keys[0]);
+        double Ts = keys[1].subtract(keys[0]).doubleValue();
 
         for (int i = 0; i < values.length; i++) {
-            result.put(keys[i], sum(values[i], values, i, radius));
+            result.put(keys[i], sum(keys[i].doubleValue(), Ts, values, i, radius));
         }
 
         return result;
     }
 
-    private double sum(double x, Double[] values, int index, int radius) {
+    private double sum(double t, double Ts, Double[] values, int index, int radius) {
         int left = Math.max(index - radius, 0);
         int right = Math.min(index + radius, values.length - 1);
 
         double sum = 0.0;
         for (int i = left; i < right; i++) {
-            sum += values[i] * sinc(x);
+            sum += values[i] * sinc(t / Ts - i);
         }
         return sum;
     }
@@ -36,5 +36,4 @@ public class SincReconstructor implements Reconstructor {
     private double sinc(double t) {
         return t == 0.0 ? 1.0 : Math.sin(Math.PI * t) / (Math.PI * t);
     }
-
 }

@@ -10,6 +10,7 @@ public class ZeroHoldReconstructor{
 
     public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, double T) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
+
         ArrayList<BigDecimal> keys = new ArrayList<>(signal.keySet());
         double signalT = keys.get(1).subtract(keys.get(0)).doubleValue();
         double count = T/signalT;
