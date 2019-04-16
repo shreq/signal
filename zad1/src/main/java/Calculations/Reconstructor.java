@@ -5,5 +5,5 @@ import java.util.TreeMap;
 
 public interface Reconstructor {
 
-    TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal);
+    TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, int radius);
 }
