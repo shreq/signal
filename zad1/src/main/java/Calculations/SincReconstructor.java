@@ -25,4 +25,9 @@ public class SincReconstructor implements Reconstructor {
     private double sinc(BigDecimal t) {
         return sinc(t.doubleValue());
     }
+
+    @Override
+    public double reconstruct(BigDecimal t, TreeMap<BigDecimal, Double> signal) {
+        return 0;
+    }
 }
