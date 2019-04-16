@@ -64,9 +64,9 @@ public class QuantizeDialog extends JDialog {
         TreeMap<BigDecimal, Double> result = Quantizer.quantize(data, resolution);
         DecimalFormat dc = new DecimalFormat("0.00000");
         Utils.drawSignal("Quanitzation MSE: " + dc.format(Calculator.MeanSquareError(data, result)) +
-                " SNR: " + dc.format(Calculator.MeanSquareError(data, result)) +
-                " PSNR: " + dc.format(Calculator.MeanSquareError(data, result)) +
-                " MD: " + dc.format(Calculator.MeanSquareError(data, result)), result);
+                " SNR: " + dc.format(Calculator.SignalNoiseRatio(data, result)) +
+                " PSNR: " + dc.format(Calculator.PeakSignalNoiseRatio(data, result)) +
+                " MD: " + dc.format(Calculator.MaximumDifference(data, result)), result);
         SerializationModel model = new SerializationModel(result.firstKey().doubleValue(), fs, result, "Quantize_" + name);
         try {
             Serialization.Serialize(model, System.getProperty("user.dir") + "/" + model.name);
