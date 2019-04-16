@@ -1,26 +1,29 @@
 package gui;
 
-import Calculations.Reconstructor;
-import Calculations.SincReconstructor;
+import Calculations.ZeroHoldReconstructor;
 import Charts.Utils;
 
+import javax.naming.spi.DirObjectFactory;
 import javax.swing.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.util.TreeMap;
 
-public class SincRecDialog extends JDialog {
+public class ZeroOrderHoldDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JLabel radiusLabel;
-    private JTextField radiusField;
+    private JTextField durationField;
+    private JLabel singalTLabel;
     private TreeMap<BigDecimal, Double> data;
-    private Reconstructor reconstructor;
+    private double signalT;
+    private String name;
 
-    public SincRecDialog(TreeMap<BigDecimal, Double> data) {
-        this.data = data;
-        this.reconstructor = new SincReconstructor();
+    public ZeroOrderHoldDialog(TreeMap<BigDecimal, Double> _data, double _fs, String _name) {
+        this.data = _data;
+        this.signalT = 1/_fs;
+        this.name = _name;
+        singalTLabel.setText(singalTLabel.getText() + " " + signalT);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -54,8 +57,9 @@ public class SincRecDialog extends JDialog {
     }
 
     private void onOK() {
-        TreeMap<BigDecimal, Double> result = reconstructor.reconstruct(data, Integer.parseInt(radiusField.getText()));
-        Utils.drawSignal("Reconstrucred signal", result);
+        ZeroHoldReconstructor reconstructor = new ZeroHoldReconstructor();
+        TreeMap<BigDecimal, Double> result = reconstructor.reconstruct(data, Double.parseDouble(durationField.getText()));
+        Utils.drawSignal("ZOH " + name, result);
         dispose();
     }
 
@@ -64,13 +68,13 @@ public class SincRecDialog extends JDialog {
         dispose();
     }
 
-    public static void showDialog(TreeMap<BigDecimal, Double> _data){
+    public static void showDialog(TreeMap<BigDecimal, Double> _data, double _fs, String _name){
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-        SincRecDialog dialog = new SincRecDialog(_data);
+        ZeroOrderHoldDialog dialog = new ZeroOrderHoldDialog(_data, _fs, _name);
         dialog.pack();
         dialog.setVisible(true);
     }

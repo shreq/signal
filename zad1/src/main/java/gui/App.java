@@ -259,8 +259,8 @@ public class App implements ItemListener {
             setModelAsCurrent(resultModel);
         });
         quantize.addActionListener(e-> QuantizeDialog.showDialog(currentData, currentFs, currentName));
-        sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData, new SincReconstructor()));
-        zeroHold.addActionListener(e-> SincRecDialog.showDialog(currentData, new ZeroHoldReconstructor()));
+        sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData));
+        zeroHold.addActionListener(e-> ZeroOrderHoldDialog.showDialog(currentData, currentFs, currentName));
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
         buttonPane2.add(subtract);
