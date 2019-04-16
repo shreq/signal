@@ -2,24 +2,28 @@ package Calculations;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
-public class ZeroHoldReconstructor{
+public class ZeroHoldReconstructor implements Reconstructor{
 
-    private int n;
-
-    public ZeroHoldReconstructor(int n){
-        this.n = n;
+    @Override
+    public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, int radius) {
+        TreeMap<BigDecimal, Double> result = new TreeMap<>();
+        for(Map.Entry<BigDecimal, Double> e : signal.entrySet()){
+            result.put(e.getKey(), reconstructSinglePoint(e.getKey(), signal, radius));
+        }
+        return result;
     }
 
-    public double reconstruct(BigDecimal t, TreeMap<BigDecimal, Double> signal) {
+    public double reconstructSinglePoint(BigDecimal t, TreeMap<BigDecimal, Double> signal, int n) {
         double result = 0.0;
         ArrayList<BigDecimal> keys = new ArrayList<>(signal.keySet());
         int indexOfTOrFirstBefore = lowerBound(keys, t);
         double T = keys.get(1).doubleValue() - keys.get(0).doubleValue();
         int startIndex = indexOfTOrFirstBefore - n >= 0 ? indexOfTOrFirstBefore - n : 0;
         int endIndex = indexOfTOrFirstBefore + n - 1 < keys.size() ? indexOfTOrFirstBefore + n - 1 : keys.size() - 1;
-        for (int i = startIndex; i <= endIndex; startIndex++){
+        for (int i = startIndex; i <= endIndex; i++){
             result += signal.get(keys.get(i)) * rect(t.doubleValue(), T, i - endIndex);
         }
         return result;
@@ -48,4 +52,5 @@ public class ZeroHoldReconstructor{
         else
             return 1.0;
     }
+
 }

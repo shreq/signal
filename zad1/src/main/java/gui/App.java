@@ -1,9 +1,6 @@
 package gui;
 
-import Calculations.Calculator;
-import Calculations.Operator;
-import Calculations.Quantizer;
-import Calculations.SincReconstructor;
+import Calculations.*;
 import Charts.Utils;
 import Signals.*;
 import serialization.Serialization;
@@ -216,6 +213,7 @@ public class App implements ItemListener {
         JButton divide = new JButton("Divide");
         JButton quantize = new JButton("Quantize");
         JButton sincRec = new JButton("Sinc Rec.");
+        JButton zeroHold = new JButton("ZHO");
         ArrayList<SerializationModel> data = new ArrayList<>();
         data.add(null);
         data.add(null);
@@ -261,7 +259,8 @@ public class App implements ItemListener {
             setModelAsCurrent(resultModel);
         });
         quantize.addActionListener(e-> QuantizeDialog.showDialog(currentData, currentFs, currentName));
-        sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData));
+        sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData, new SincReconstructor()));
+        zeroHold.addActionListener(e-> SincRecDialog.showDialog(currentData, new ZeroHoldReconstructor()));
         buttonPane2.add(selectButton);
         buttonPane2.add(add);
         buttonPane2.add(subtract);
@@ -269,6 +268,7 @@ public class App implements ItemListener {
         buttonPane2.add(divide);
         buttonPane3.add(quantize);
         buttonPane3.add(sincRec);
+        buttonPane3.add(zeroHold);
         mainBottomPane.add(buttonPane1, BorderLayout.PAGE_START);
         mainBottomPane.add(buttonPane2, BorderLayout.CENTER);
         mainBottomPane.add(buttonPane3, BorderLayout.PAGE_END);
@@ -354,7 +354,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(950, 220);
+        frame.setSize(1050, 220);
         frame.setVisible(true);
     }
 
