@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-public class ZeroHoldReconstructor implements Reconstructor{
+public class ZeroHoldReconstructor{
 
     private int n;
 

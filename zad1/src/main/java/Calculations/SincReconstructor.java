@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 public class SincReconstructor implements Reconstructor {
 
+    @Override
     public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, int radius) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
@@ -36,8 +37,4 @@ public class SincReconstructor implements Reconstructor {
         return t == 0.0 ? 1.0 : Math.sin(Math.PI * t) / (Math.PI * t);
     }
 
-    @Override
-    public double reconstruct(BigDecimal t, TreeMap<BigDecimal, Double> signal) {
-        return 0;
-    }
 }
