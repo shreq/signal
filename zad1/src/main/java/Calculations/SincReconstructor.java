@@ -29,17 +29,6 @@ public class SincReconstructor{
         return result;
     }
 
-    private double sum(double t, double Ts, Double[] values, int index, int radius) {
-        int left = Math.max(index - radius, 0);
-        int right = Math.min(index + radius, values.length - 1);
-
-        double sum = 0.0;
-        for (int i = left; i < right; i++) {
-            sum += values[i] * sinc(t / Ts - i);
-        }
-        return sum;
-    }
-
     private double sinc(double t) {
         return t == 0.0 ? 1.0 : Math.sin(Math.PI * t) / (Math.PI * t);
     }

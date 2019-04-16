@@ -16,14 +16,14 @@ public class ZeroOrderHoldDialog extends JDialog {
     private JTextField durationField;
     private JLabel singalTLabel;
     private TreeMap<BigDecimal, Double> data;
-    private double signalT;
+    private double signalfs;
     private String name;
 
     public ZeroOrderHoldDialog(TreeMap<BigDecimal, Double> _data, double _fs, String _name) {
         this.data = _data;
-        this.signalT = 1/_fs;
+        this.signalfs = _fs;
         this.name = _name;
-        singalTLabel.setText(singalTLabel.getText() + " " + signalT);
+        singalTLabel.setText(singalTLabel.getText() + " " + signalfs);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -58,7 +58,7 @@ public class ZeroOrderHoldDialog extends JDialog {
 
     private void onOK() {
         ZeroHoldReconstructor reconstructor = new ZeroHoldReconstructor();
-        TreeMap<BigDecimal, Double> result = reconstructor.reconstruct(data, Double.parseDouble(durationField.getText()));
+        TreeMap<BigDecimal, Double> result = reconstructor.reconstruct(data, signalfs,  Double.parseDouble(durationField.getText()));
         Utils.drawSignal("ZOH " + name, result);
         dispose();
     }

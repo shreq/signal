@@ -1,29 +1,34 @@
 package Calculations;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class ZeroHoldReconstructor{
 
-    public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, double T) {
-        TreeMap<BigDecimal, Double> result = new TreeMap<>();
-
-        ArrayList<BigDecimal> keys = new ArrayList<>(signal.keySet());
-        double signalT = keys.get(1).subtract(keys.get(0)).doubleValue();
-        double count = T/signalT;
-        int counter = 0;
+    public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, double fs, double k) {
+        TreeMap<BigDecimal, Double> result = signal;
+        double newfs = fs*k;
+        BigDecimal duration = signal.lastKey();
+        BigDecimal step = duration.divide(duration.multiply(new BigDecimal(newfs)));
         double currentVal = signal.firstEntry().getValue();
-        for(Map.Entry<BigDecimal, Double> e : signal.entrySet()){
-            if(counter >= count){
-                currentVal = e.getValue();
-                counter = 0;
-            }
-            result.put(e.getKey(), currentVal);
-            ++counter;
+        for(BigDecimal i = new BigDecimal(0); i.compareTo(duration)<1; i = i.add(step)){
+            if(!result.getOrDefault(i, currentVal).equals(currentVal))
+                currentVal = result.get(i);
+            result.put(i, result.getOrDefault(i, currentVal));
         }
+//        ArrayList<BigDecimal> keys = new ArrayList<>(signal.keySet());
+//        double signalT = keys.get(1).subtract(keys.get(0)).doubleValue();
+//        double count = T/signalT;
+//        int counter = 0;
+//        double currentVal = signal.firstEntry().getValue();
+//        for(Map.Entry<BigDecimal, Double> e : signal.entrySet()){
+//            if(counter >= count){
+//                currentVal = e.getValue();
+//                counter = 0;
+//            }
+//            result.put(e.getKey(), currentVal);
+//            ++counter;
+//        }
         return result;
     }
 
