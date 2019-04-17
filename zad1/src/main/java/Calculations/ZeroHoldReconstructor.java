@@ -1,20 +1,30 @@
 package Calculations;
 
+import javax.swing.text.html.parser.Entity;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class ZeroHoldReconstructor{
 
     public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, double fs, double k) {
-        TreeMap<BigDecimal, Double> result = signal;
+        ArrayList<Double> keys = new ArrayList<>();
+        for (BigDecimal key : signal.keySet()) {
+            keys.add(key.setScale(7, RoundingMode.CEILING).doubleValue());
+        }
+        TreeMap<BigDecimal, Double> result = new TreeMap<>();
+        for(Map.Entry<BigDecimal, Double> e : signal.entrySet()){
+            result.put(e.getKey().setScale(7, RoundingMode.CEILING), e.getValue());
+        }
         double newfs = fs*k;
         BigDecimal duration = signal.lastKey();
-        BigDecimal step = duration.divide(duration.multiply(new BigDecimal(newfs)));
+        BigDecimal siema = duration.multiply(new BigDecimal(newfs));
+        BigDecimal step = duration.divide(siema, 10, RoundingMode.HALF_UP);
         double currentVal = signal.firstEntry().getValue();
         for(BigDecimal i = new BigDecimal(0); i.compareTo(duration)<1; i = i.add(step)){
-            if(!result.getOrDefault(i, currentVal).equals(currentVal))
-                currentVal = result.get(i);
-            result.put(i, result.getOrDefault(i, currentVal));
+            if(keys.contains(i.setScale(7, RoundingMode.CEILING).doubleValue()))
+                currentVal = result.get(i.setScale(7, RoundingMode.CEILING));
+            result.put(i.setScale(7, RoundingMode.CEILING), result.getOrDefault(i.setScale(7, RoundingMode.CEILING), currentVal));
         }
 //        ArrayList<BigDecimal> keys = new ArrayList<>(signal.keySet());
 //        double signalT = keys.get(1).subtract(keys.get(0)).doubleValue();
