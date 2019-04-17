@@ -10,21 +10,26 @@ public class ZeroHoldReconstructor{
     public TreeMap<BigDecimal, Double> reconstruct(TreeMap<BigDecimal, Double> signal, double fs, double k) {
         ArrayList<Double> keys = new ArrayList<>();
         for (BigDecimal key : signal.keySet()) {
-            keys.add(key.setScale(7, RoundingMode.CEILING).doubleValue());
+            keys.add(key.setScale(6, RoundingMode.HALF_UP).doubleValue());
         }
-        TreeMap<BigDecimal, Double> result = new TreeMap<>();
+        TreeMap<Double, Double> result = new TreeMap<>();
         for(Map.Entry<BigDecimal, Double> e : signal.entrySet()){
-            result.put(e.getKey().setScale(7, RoundingMode.CEILING), e.getValue());
+            result.put(e.getKey().setScale(6, RoundingMode.HALF_UP).doubleValue(), e.getValue());
         }
         double newfs = fs*k;
-        BigDecimal duration = signal.lastKey();
-        BigDecimal siema = duration.multiply(new BigDecimal(newfs));
-        BigDecimal step = duration.divide(siema, 10, RoundingMode.HALF_UP);
+        double duration = signal.lastKey().doubleValue();
+        double siema = duration*newfs;
+        double step = duration/siema;
         double currentVal = signal.firstEntry().getValue();
-        for(BigDecimal i = new BigDecimal(0); i.compareTo(duration)<1; i = i.add(step)){
-            if(keys.contains(i.setScale(7, RoundingMode.CEILING).doubleValue()))
-                currentVal = result.get(i.setScale(7, RoundingMode.CEILING));
-            result.put(i.setScale(7, RoundingMode.CEILING), result.getOrDefault(i.setScale(7, RoundingMode.CEILING), currentVal));
+        for(double i = 0.0; i<=duration; i = i + step){
+            double ix = round(i, 6);
+            if(keys.contains(ix))
+                currentVal = result.get(ix);
+            result.put(i, result.getOrDefault(i, currentVal));
+        }
+        TreeMap<BigDecimal, Double> res2 = new TreeMap<>();
+        for(Map.Entry<Double, Double> e : result.entrySet()){
+            res2.put(new BigDecimal(e.getKey()), e.getValue());
         }
 //        ArrayList<BigDecimal> keys = new ArrayList<>(signal.keySet());
 //        double signalT = keys.get(1).subtract(keys.get(0)).doubleValue();
@@ -39,7 +44,15 @@ public class ZeroHoldReconstructor{
 //            result.put(e.getKey(), currentVal);
 //            ++counter;
 //        }
-        return result;
+        return res2;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 //    @Override
