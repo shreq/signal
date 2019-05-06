@@ -213,7 +213,7 @@ public class App implements ItemListener {
         JButton divide = new JButton("Divide");
         JButton quantize = new JButton("Quantize");
         JButton sincRec = new JButton("Sinc Rec.");
-        JButton zeroHold = new JButton("ZHO");
+        JButton zeroHold = new JButton("ZOH");
         ArrayList<SerializationModel> data = new ArrayList<>();
         data.add(null);
         data.add(null);
