@@ -1,11 +1,7 @@
 package gui;
 
-import Calculations.Convolution;
 import Calculations.SincReconstructor;
 import Charts.Utils;
-import Signals.Signal;
-import Signals.SignalRectangular;
-import Signals.SignalSinusoidal;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -60,12 +56,7 @@ public class SincRecDialog extends JDialog {
 
     private void onOK() {
         TreeMap<BigDecimal, Double> result = reconstructor.reconstruct(data, fs, Double.parseDouble(radiusField.getText()));
-
-        Signal s1 = new SignalSinusoidal(1, 0, 10, 0.5);
-        Signal s2 = new SignalRectangular(1, 0, 10, 0.5, 0.7);
-        result = Convolution.convolute(s1.generate(100), s2.generate(100));
-
-        Utils.drawSignal("Reconstrucred signal", result);
+        Utils.drawSignal("Reconstructed signal", result);
         dispose();
     }
 

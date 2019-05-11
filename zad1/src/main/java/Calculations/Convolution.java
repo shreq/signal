@@ -1,6 +1,7 @@
 package Calculations;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.TreeMap;
 
 public class Convolution {
@@ -10,6 +11,7 @@ public class Convolution {
         Double[] valuesB = signalB.values().toArray(new Double[0]);
 
         Double[] vec = new Double[valuesA.length + valuesB.length - 1];
+        Arrays.fill(vec, 0.0);
         for (int i = 0; i < valuesA.length; i++) {
             vec[i + (int) Math.ceil(valuesB.length / 2)] = valuesA[i];
         }

@@ -388,7 +388,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(520, 240);
+        frame.setSize(550, 275);
         frame.setVisible(true);
     }
 
