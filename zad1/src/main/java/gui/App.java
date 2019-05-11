@@ -1,6 +1,7 @@
 package gui;
 
-import Calculations.*;
+import Calculations.Calculator;
+import Calculations.Operator;
 import Charts.Utils;
 import Signals.*;
 import serialization.Serialization;
@@ -42,17 +43,13 @@ public class App implements ItemListener {
     private String currentName;
 
     private JPanel createCard(Class<? extends Signal> signalClass, String... names) {
-        JPanel card = new JPanel();
-        GroupLayout layout = new GroupLayout(card);
-        card.setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
 
         // region create main GroupLayout groups
+        JPanel card = new JPanel();
+        GroupLayout layout = new GroupLayout(card);
         GroupLayout.SequentialGroup mainVertical = layout.createSequentialGroup();
-        layout.setVerticalGroup(mainVertical);
         GroupLayout.ParallelGroup mainHorizontal = layout.createParallelGroup();
-        layout.setHorizontalGroup(mainHorizontal);
+        prepareGroupPanel(card, mainHorizontal, mainVertical, layout);
         // endregion
 
         // region create input fields
@@ -84,7 +81,7 @@ public class App implements ItemListener {
         mainVertical.addGroup(inputFieldsVertical);
         mainHorizontal.addGroup(inputFieldsHorizontal);
         // endregion
-        // region create button
+        // region create Show button
         JButton button = new JButton("Show");
         mainVertical.addComponent(button);
         mainHorizontal.addComponent(button, GroupLayout.Alignment.CENTER);
@@ -200,12 +197,25 @@ public class App implements ItemListener {
 
         // region create save and math buttons
         JPanel mainBottomPane = new JPanel();
-        JPanel buttonPane1 = new JPanel();
-        JPanel buttonPane2 = new JPanel();
-        JPanel buttonPane3 = new JPanel();
+        GroupLayout layout = new GroupLayout(mainBottomPane);
+        GroupLayout.SequentialGroup mainVert = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup mainHoriz = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
+        prepareGroupPanel(mainBottomPane, mainHoriz, mainVert, layout);
+
         JButton save = new JButton("Save");
         JButton load = new JButton("Load");
         JButton saveText = new JButton("Save Text");
+        JButton selectButton = new JButton("Select signals");
+        JButton add = new JButton("Add");
+        JButton subtract = new JButton("Subtract");
+        JButton multiply = new JButton("Multiply");
+        JButton divide = new JButton("Divide");
+        JButton quantize = new JButton("Quantize");
+        JButton sincRec = new JButton("Sinc Rec.");
+        JButton zeroHold = new JButton("ZOH");
+        JLabel binsLabel = new JLabel("Histogram bins: ");
+        JTextField binsTextField = new JTextField("20", 3);
+
         save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, currentName));
         load.addActionListener(e -> {
             LoadDialog dialog = new LoadDialog();
@@ -214,17 +224,7 @@ public class App implements ItemListener {
             setModelAsCurrent(dialog.getModel());
         });
         saveText.addActionListener(e -> saveToTextFile());
-        buttonPane1.add(save);
-        buttonPane1.add(load);
-        buttonPane1.add(saveText);
-        JButton selectButton = new JButton("Select signals");
-        JButton add = new JButton("Add");
-        JButton subtract = new JButton("Subtract");
-        JButton multiply = new JButton("Multiply");
-        JButton divide = new JButton("Divide");
-        JButton quantize = new JButton("Quantize");
-        JButton sincRec = new JButton("Sinc Rec.");
-        JButton zeroHold = new JButton("ZHO");
+
         ArrayList<SerializationModel> data = new ArrayList<>();
         data.add(null);
         data.add(null);
@@ -269,31 +269,54 @@ public class App implements ItemListener {
             saveOperationOutput(resultModel, (data.get(0).name + " divide " + data.get(1).name).replace(" ", "_"));
             setModelAsCurrent(resultModel);
         });
+
         quantize.addActionListener(e-> QuantizeDialog.showDialog(currentData, currentFs, currentName));
         sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData, currentFs));
         zeroHold.addActionListener(e-> ZeroOrderHoldDialog.showDialog(currentData, currentFs, currentName));
-        buttonPane2.add(selectButton);
-        buttonPane2.add(add);
-        buttonPane2.add(subtract);
-        buttonPane2.add(multiply);
-        buttonPane2.add(divide);
-        buttonPane3.add(quantize);
-        buttonPane3.add(sincRec);
-        buttonPane3.add(zeroHold);
-        mainBottomPane.add(buttonPane1, BorderLayout.PAGE_START);
-        mainBottomPane.add(buttonPane2, BorderLayout.CENTER);
-        mainBottomPane.add(buttonPane3, BorderLayout.PAGE_END);
+
+        binsTextField.addActionListener(e -> Utils.BINS = Integer.parseInt(binsTextField.getText()));
+
+        GroupLayout.SequentialGroup firstRowHoriz = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup firstRowVert = layout.createParallelGroup();
+        firstRowHoriz.addComponent(selectButton);   firstRowVert.addComponent(selectButton);
+        firstRowHoriz.addComponent(add);            firstRowVert.addComponent(add);
+        firstRowHoriz.addComponent(subtract);       firstRowVert.addComponent(subtract);
+        firstRowHoriz.addComponent(multiply);       firstRowVert.addComponent(multiply);
+        firstRowHoriz.addComponent(divide);         firstRowVert.addComponent(divide);
+        firstRowHoriz.addComponent(binsLabel);      firstRowVert.addComponent(binsLabel);
+        firstRowHoriz.addComponent(binsTextField);  firstRowVert.addComponent(binsTextField);
+
+        GroupLayout.SequentialGroup secondRowHoriz = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup secondRowVert = layout.createParallelGroup();
+        secondRowHoriz.addComponent(quantize);      secondRowVert.addComponent(quantize);
+        secondRowHoriz.addComponent(sincRec);       secondRowVert.addComponent(sincRec);
+        secondRowHoriz.addComponent(zeroHold);      secondRowVert.addComponent(zeroHold);
+
+        GroupLayout.SequentialGroup thirdRowHoriz = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup thirdRowVert = layout.createParallelGroup();
+        thirdRowHoriz.addComponent(saveText);       thirdRowVert.addComponent(saveText);
+        thirdRowHoriz.addComponent(save);           thirdRowVert.addComponent(save);
+        thirdRowHoriz.addComponent(load);           thirdRowVert.addComponent(load);
+
+        mainHoriz.addGroup(firstRowHoriz);
+        mainHoriz.addGroup(secondRowHoriz);
+        mainHoriz.addGroup(thirdRowHoriz);
+        mainVert.addGroup(firstRowVert);
+        mainVert.addGroup(secondRowVert);
+        mainVert.addGroup(thirdRowVert);
         // endregion
-        mainBottomPane.add(new JLabel("Histogram bins: "));
-        JTextField binsTextField = new JTextField("20", 3);
-        binsTextField.addActionListener(e -> {
-            Utils.BINS = Integer.parseInt(binsTextField.getText());
-        });
-        mainBottomPane.add(binsTextField);
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
         pane.add(cards, BorderLayout.CENTER);
         pane.add(mainBottomPane, BorderLayout.PAGE_END);
+    }
+
+    private void prepareGroupPanel(JPanel panel, GroupLayout.Group horizontal, GroupLayout.Group vertical, GroupLayout layout){
+        panel.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        layout.setHorizontalGroup(horizontal);
+        layout.setVerticalGroup(vertical);
     }
 
     private void saveToTextFile(){
@@ -365,7 +388,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(1050, 220);
+        frame.setSize(520, 240);
         frame.setVisible(true);
     }
 
