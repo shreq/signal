@@ -56,20 +56,31 @@ public class App implements ItemListener {
         // endregion
 
         // region create input fields
-        JLabel label = new JLabel("Required fields: " + String.join(", ", names) + ", fs");
-        mainVertical.addComponent(label);
-        mainHorizontal.addComponent(label, GroupLayout.Alignment.CENTER);
         GroupLayout.ParallelGroup inputFieldsVertical = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
         GroupLayout.SequentialGroup inputFieldsHorizontal = layout.createSequentialGroup();
         JTextField[] fields = new JTextField[names.length];
         for (int i = 0; i < names.length; i++) {
             fields[i] = new JTextField();
-            inputFieldsVertical.addComponent(fields[i]);
-            inputFieldsHorizontal.addComponent(fields[i]);
+            JLabel nameLabel = new JLabel(names[i]);
+            GroupLayout.ParallelGroup pairHoriz = layout.createParallelGroup();
+            GroupLayout.SequentialGroup pairVert = layout.createSequentialGroup();
+            pairHoriz.addComponent(nameLabel);
+            pairHoriz.addComponent(fields[i]);
+            pairVert.addComponent(nameLabel);
+            pairVert.addComponent(fields[i]);
+            inputFieldsVertical.addGroup(pairVert);
+            inputFieldsHorizontal.addGroup(pairHoriz);
         }
+        JLabel fsLabel = new JLabel("fs");
         JTextField fsTextField = new JTextField();
-        inputFieldsVertical.addComponent(fsTextField);
-        inputFieldsHorizontal.addComponent(fsTextField);
+        GroupLayout.ParallelGroup pairHoriz = layout.createParallelGroup();
+        GroupLayout.SequentialGroup pairVert = layout.createSequentialGroup();
+        pairHoriz.addComponent(fsLabel);
+        pairHoriz.addComponent(fsTextField);
+        pairVert.addComponent(fsLabel);
+        pairVert.addComponent(fsTextField);
+        inputFieldsVertical.addGroup(pairVert);
+        inputFieldsHorizontal.addGroup(pairHoriz);
         mainVertical.addGroup(inputFieldsVertical);
         mainHorizontal.addGroup(inputFieldsHorizontal);
         // endregion
