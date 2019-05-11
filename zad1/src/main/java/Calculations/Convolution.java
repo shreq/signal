@@ -1,7 +1,6 @@
 package Calculations;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.TreeMap;
 
 public class Convolution {
