@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 public class Convolution {
 
-    public static TreeMap<BigDecimal, Double> convolute(TreeMap<BigDecimal, Double> signalA, TreeMap<BigDecimal, Double> signalB) {
+    public static TreeMap<BigDecimal, Double> convolve(TreeMap<BigDecimal, Double> signalA, TreeMap<BigDecimal, Double> signalB) {
         Double[] valuesA = signalA.values().toArray(new Double[0]);
         Double[] valuesB = signalB.values().toArray(new Double[0]);
 
