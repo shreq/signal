@@ -2,13 +2,14 @@ package Calculations;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.TreeMap;
 
 public class Convolution {
 
     public static TreeMap<BigDecimal, Double> convolve(TreeMap<BigDecimal, Double> signalA, TreeMap<BigDecimal, Double> signalB) {
         Double[] valuesA = signalA.values().toArray(new Double[0]);
-        Double[] valuesB = signalB.values().toArray(new Double[0]);
+        Double[] valuesB = reverse(signalB).values().toArray(new Double[0]);
 
         Double[] vec = new Double[valuesA.length + valuesB.length - 1];
         Arrays.fill(vec, 0.0);
@@ -30,7 +31,7 @@ public class Convolution {
         return join(signalA.keySet().toArray(new BigDecimal[0]), result);
     }
 
-    private static TreeMap<BigDecimal, Double> join(BigDecimal[] keys, Double[] values) {
+    static TreeMap<BigDecimal, Double> join(BigDecimal[] keys, Double[] values) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
         for (int i = 0; i < keys.length; i++) {
@@ -38,5 +39,11 @@ public class Convolution {
         }
 
         return result;
+    }
+
+    static TreeMap<BigDecimal, Double> reverse(TreeMap<BigDecimal, Double> map) {
+        TreeMap<BigDecimal, Double> reversed = new TreeMap<>(Collections.reverseOrder());
+        reversed.putAll(map);
+        return reversed;
     }
 }
