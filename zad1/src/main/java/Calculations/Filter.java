@@ -8,7 +8,7 @@ public class Filter {
 
     public static TreeMap<BigDecimal, Double> lowpass(TreeMap<BigDecimal, Double> signal, double smoothing) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
-        Double value = signal.firstEntry().getValue();
+        Double value = 0.0;
 
         for (Map.Entry<BigDecimal, Double> entry : signal.entrySet()) {
             value += (entry.getValue() - value) / smoothing;
