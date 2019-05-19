@@ -17,4 +17,24 @@ public class Filter {
 
         return result;
     }
+
+    private static double filterResponse(int n, int k) {
+        if (n == 0) {
+            return 2 / k;
+        }
+
+        return Math.sin((2 * Math.PI * n) / k) / (Math.PI * n);
+    }
+
+    private static double hamming(int n, int m) {
+        return 0.53836 - 0.46164 * Math.cos((2 * Math.PI * n) / m);
+    }
+
+    private static double hanning(int n, int m) {
+        return 0.5 - 0.5 * Math.cos((2 * Math.PI * n) / m);
+    }
+
+    private static double blackman(int n, int m) {
+        return 0.42 - 0.5 * Math.cos((2 * Math.PI * n) / m) + 0.08 * Math.cos((4 * Math.PI * n) / m);
+    }
 }
