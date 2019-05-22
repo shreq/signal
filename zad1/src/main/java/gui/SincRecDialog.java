@@ -67,7 +67,7 @@ public class SincRecDialog extends JDialog {
         */
         /**/
         Signal s3 = new NoiseUniformDistribution(1, 0, 100);
-        result = Filter.lowpass(s3.generate(50), 500);
+        result = Filter.lowpass(s3.generate(50), 10, 0, 1);
         /**/
         Utils.drawSignal("Reconstructed signal", result);
         dispose();
