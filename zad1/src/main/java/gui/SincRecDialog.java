@@ -1,9 +1,7 @@
 package gui;
 
-import Calculations.Convolution;
-import Calculations.Correlation;
-import Calculations.Filter;
-import Calculations.SincReconstructor;
+import Calculations.*;
+import Calculations.Windows.BlackmanWindow;
 import Charts.Utils;
 import Signals.*;
 
@@ -66,8 +64,12 @@ public class SincRecDialog extends JDialog {
         result = Correlation.correlate(s1.generate(1000), s2.generate(1000));
         */
         /**/
-        Signal s3 = new NoiseUniformDistribution(1, 0, 100);
-        result = Filter.lowpass(s3.generate(50), 10, 0, 1);
+        //Signal s3 = new NoiseUniformDistribution(1, 0, 100);
+        Signal s3 = new SignalSinusoidal(1, 0, 10, 10);
+        Signal s4 = new SignalSinusoidal(1, 0, 10, 0.1);
+        TreeMap<BigDecimal, Double> map = Operator.Addition(s3.generate(50), s4.generate(50));
+        TreeMap<BigDecimal, Double> filter = Filter.lowpass(map, 500, 10, 100, new BlackmanWindow());
+        result = Convolution.convolve(filter, map);
         /**/
         Utils.drawSignal("Reconstructed signal", result);
         dispose();
