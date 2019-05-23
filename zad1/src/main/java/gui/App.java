@@ -1,6 +1,8 @@
 package gui;
 
 import Calculations.Calculator;
+import Calculations.Convolution;
+import Calculations.Correlation;
 import Calculations.Operator;
 import Charts.Utils;
 import Signals.*;
@@ -215,6 +217,9 @@ public class App implements ItemListener {
         JButton zeroHold = new JButton("ZOH");
         JLabel binsLabel = new JLabel("Histogram bins: ");
         JTextField binsTextField = new JTextField("20", 3);
+        JButton correlation = new JButton("Correlation");
+        JButton convolution = new JButton("Convolution");
+        JButton filter = new JButton("Filter");
 
         save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, currentName));
         load.addActionListener(e -> {
@@ -273,8 +278,20 @@ public class App implements ItemListener {
         quantize.addActionListener(e-> QuantizeDialog.showDialog(currentData, currentFs, currentName));
         sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData, currentFs));
         zeroHold.addActionListener(e-> ZeroOrderHoldDialog.showDialog(currentData, currentFs, currentName));
-
         binsTextField.addActionListener(e -> Utils.BINS = Integer.parseInt(binsTextField.getText()));
+        correlation.addActionListener(e-> {
+            TreeMap<BigDecimal, Double> result = Correlation.correlate(data.get(0).data, data.get(1).data);
+            Utils.drawSignal("Correlation of " + data.get(0).name + " " + data.get(1).name, result);
+            Utils.drawHistogram("Correlation of " + data.get(0).name + " " + data.get(1).name, result);
+        });
+        convolution.addActionListener(e->{
+            TreeMap<BigDecimal, Double> result = Convolution.convolve(data.get(0).data, data.get(1).data);
+            Utils.drawSignal("Convolution of " + data.get(0).name + " " + data.get(1).name, result);
+            Utils.drawHistogram("Convolution of " + data.get(0).name + " " + data.get(1).name, result);
+        });
+        filter.addActionListener(e-> {
+            //todo filter action listener
+        });
 
         GroupLayout.SequentialGroup firstRowHoriz = layout.createSequentialGroup();
         GroupLayout.ParallelGroup firstRowVert = layout.createParallelGroup();
@@ -298,12 +315,20 @@ public class App implements ItemListener {
         thirdRowHoriz.addComponent(save);           thirdRowVert.addComponent(save);
         thirdRowHoriz.addComponent(load);           thirdRowVert.addComponent(load);
 
+        GroupLayout.SequentialGroup fourthRowHoriz = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup fourthRowVert = layout.createParallelGroup();
+        fourthRowHoriz.addComponent(correlation);   fourthRowVert.addComponent(correlation);
+        fourthRowHoriz.addComponent(convolution);   fourthRowVert.addComponent(convolution);
+        fourthRowHoriz.addComponent(filter);        fourthRowVert.addComponent(filter);
+
         mainHoriz.addGroup(firstRowHoriz);
         mainHoriz.addGroup(secondRowHoriz);
         mainHoriz.addGroup(thirdRowHoriz);
+        mainHoriz.addGroup(fourthRowHoriz);
         mainVert.addGroup(firstRowVert);
         mainVert.addGroup(secondRowVert);
         mainVert.addGroup(thirdRowVert);
+        mainVert.addGroup(fourthRowVert);
         // endregion
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -388,7 +413,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(550, 275);
+        frame.setSize(550, 300);
         frame.setVisible(true);
     }
 
