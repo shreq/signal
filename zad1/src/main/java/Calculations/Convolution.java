@@ -11,15 +11,23 @@ public class Convolution {
         Double[] valuesA = signalA.values().toArray(new Double[0]);
         Double[] valuesB = reverse(signalB).values().toArray(new Double[0]);
 
+        /*Double[] result = new Double[valuesA.length + valuesB.length - 1];
+        Arrays.fill(result, 0.0);
+        for (int i = 0; i < valuesA.length; i++) {
+            for (int j = 0; j < valuesB.length; j++) {
+                result[i + j] += valuesA[i] * valuesB[j];
+            }
+        }*/
+
         Double[] vec = new Double[valuesA.length + valuesB.length - 1];
         Arrays.fill(vec, 0.0);
         for (int i = 0; i < valuesA.length; i++) {
             vec[i + (int) Math.ceil(valuesB.length / 2)] = valuesA[i];
         }
 
-        Double[] result = new Double[valuesA.length];
+        Double[] result = new Double[vec.length];
         int end = 0;
-        while (end < valuesA.length) {
+        while (end < vec.length) {
             double sum = 0.0;
             for (int i = 0; i < valuesB.length; i++) {
                 sum += valuesB[i] * vec[end + i];
@@ -35,7 +43,7 @@ public class Convolution {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
         for (int i = 0; i < keys.length; i++) {
-            result.put(keys[i], values[i]);
+            result.put(new BigDecimal(i), values[i]);
         }
 
         return result;
