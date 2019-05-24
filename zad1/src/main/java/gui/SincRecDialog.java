@@ -2,6 +2,8 @@ package gui;
 
 import Calculations.*;
 import Calculations.Windows.BlackmanWindow;
+import Calculations.Windows.HammingWindow;
+import Calculations.Windows.RectangularWindow;
 import Charts.Utils;
 import Signals.*;
 
@@ -68,7 +70,7 @@ public class SincRecDialog extends JDialog {
         Signal s3 = new SignalSinusoidal(1, 0, 10, 10);
         Signal s4 = new SignalSinusoidal(1, 0, 10, 0.1);
         TreeMap<BigDecimal, Double> map = Operator.Addition(s3.generate(50), s4.generate(50));
-        TreeMap<BigDecimal, Double> filter = Filter.lowpass(map, 500, 10, 100, new BlackmanWindow());
+        TreeMap<BigDecimal, Double> filter = Filter.lowpass(map, 500, 10, 100, new RectangularWindow());
         result = Convolution.convolve(filter, map);
         /**/
         Utils.drawSignal("Reconstructed signal", result);

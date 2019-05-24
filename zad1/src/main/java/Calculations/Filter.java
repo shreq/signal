@@ -8,10 +8,9 @@ import java.util.TreeMap;
 
 public class Filter {
 
-    public static TreeMap<BigDecimal, Double> lowpass(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window) {
+    private static TreeMap<BigDecimal, Double> filter(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window, double k) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
         BigDecimal[] keys = signal.keySet().toArray(new BigDecimal[0]);
-        double k = fp / f0;
         int mid = (m - 1) / 2;
 
         for (int i = 0; i < m; i++) {
@@ -21,6 +20,11 @@ public class Filter {
         return result;
     }
 
+    public static TreeMap<BigDecimal, Double> lowpass(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window) {
+        return filter(signal, m, f0, fp, window, fp / f0);
+    }
+
+    @Deprecated
     public static TreeMap<BigDecimal, Double> lowpass0(TreeMap<BigDecimal, Double> signal, double smoothing) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
         Double value = 0.0;
@@ -34,24 +38,24 @@ public class Filter {
     }
 
     public static TreeMap<BigDecimal, Double> midpass(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window) {
-        TreeMap<BigDecimal, Double> result = new TreeMap<>();
-        BigDecimal[] keys = signal.keySet().toArray(new BigDecimal[0]);
-        Double[] lowpass = lowpass(signal, m, f0, fp, window).values().toArray(new Double[0]);
+        TreeMap<BigDecimal, Double> result = filter(signal, m, f0, fp, window, (4 * fp) / (fp - 4 * f0));
 
-        for (int i = 0; i < lowpass.length; i++) {
-            result.put(keys[i], 2 * lowpass[i] * Math.sin(Math.PI * i / 2.0));
+        int i = 0;
+        for (Map.Entry<BigDecimal, Double> entry : result.entrySet()) {
+            result.put(entry.getKey(), entry.getValue() * 2.0 * Math.sin(Math.PI * i / 2.0));
+            i++;
         }
 
         return result;
     }
 
     public static TreeMap<BigDecimal, Double> highpass(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window) {
-        TreeMap<BigDecimal, Double> result = new TreeMap<>();
-        BigDecimal[] keys = signal.keySet().toArray(new BigDecimal[0]);
-        Double[] lowpass = lowpass(signal, m, f0, fp, window).values().toArray(new Double[0]);
+        TreeMap<BigDecimal, Double> result = filter(signal, m, f0, fp, window, fp / (fp / 2.0 - f0));
 
-        for (int i = 0; i < lowpass.length; i++) {
-            result.put(keys[i], lowpass[i] * (i % 2 == 0 ? 1 : -1));
+        int i = 0;
+        for (Map.Entry<BigDecimal, Double> entry : result.entrySet()) {
+            result.put(entry.getKey(), entry.getValue() * (i % 2 == 0 ? 1 : -1));
+            i++;
         }
 
         return result;
