@@ -1,9 +1,6 @@
 package gui;
 
-import Calculations.Calculator;
-import Calculations.Convolution;
-import Calculations.Correlation;
-import Calculations.Operator;
+import Calculations.*;
 import Charts.Utils;
 import Signals.*;
 import serialization.Serialization;
@@ -290,7 +287,9 @@ public class App implements ItemListener {
             Utils.drawHistogram("Convolution of " + data.get(0).name + " " + data.get(1).name, result);
         });
         filter.addActionListener(e-> {
-            //todo filter action listener
+            FilterDialog dialog = new FilterDialog(currentData);
+            dialog.pack();
+            dialog.setVisible(true);
         });
 
         GroupLayout.SequentialGroup firstRowHoriz = layout.createSequentialGroup();
