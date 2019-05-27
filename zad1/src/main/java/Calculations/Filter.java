@@ -14,7 +14,7 @@ public class Filter {
         int mid = (m - 1) / 2;
 
         for (int i = 0; i < m; i++) {
-            result.put(new BigDecimal(i), filterResponse(i, mid, k) * window.calculate(i, m));
+            result.put(keys[i], filterResponse(i, mid, k) * window.calculate(i, m));
         }
 
         return result;
