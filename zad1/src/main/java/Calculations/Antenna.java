@@ -1,9 +1,65 @@
 package Calculations;
 
+import Signals.Signal;
+
 import java.math.BigDecimal;
 import java.util.*;
 
 public class Antenna {
+
+    TreeMap<BigDecimal, Double> signal;
+    double velocity;
+    double T;
+
+    double objVelocity;
+    boolean active;
+    double startingDistance;
+
+    double distance;
+    double timer;
+
+    public void simulate() {
+        while (active) {
+            double shift = calculateShift();
+            TreeMap<BigDecimal, Double> shifted = shift(signal, -shift);
+            TreeMap<BigDecimal, Double> correlation = Correlation.correlate(signal, shifted);
+
+
+        }
+    }
+
+    double calculateShift() {
+        return (startingDistance / velocity) + (objVelocity * timer / velocity);
+    }
+
+    static TreeMap<BigDecimal, Double> shift(TreeMap<BigDecimal, Double> signal, double time) {
+        TreeMap<BigDecimal, Double> result = new TreeMap<>();
+        ArrayList<BigDecimal> keys = new ArrayList<>(signal.keySet());
+        BigDecimal T = keys.get(1).subtract(keys.get(0));
+
+        BigDecimal t0 = signal.firstKey();
+        BigDecimal tx = roundToClosestKey(signal.keySet(), time, 3);
+        for (int i = 0; i < signal.size(); i++) {
+            result.put(t0, signal.get(tx));
+            t0 = t0.add(T);
+            tx = tx.compareTo(signal.lastKey()) >= 0 ? signal.firstKey() : tx.add(T);
+        }
+
+        return result;
+    }
+
+    static BigDecimal roundToClosestKey(Set<BigDecimal> keys, double time0, double precision) {
+        precision = Math.pow(0.1, precision);
+        BigDecimal time = new BigDecimal(time0);
+        for (BigDecimal key : keys) {
+            if (time.compareTo(key) > 0 && time.subtract(key).doubleValue() <= precision) {
+                return key;
+            }
+        }
+        return new BigDecimal(time0);
+    }
+
+    // <editor-fold desc="wrong">
     int samples;
     double timeUnit;
     double realSpeed;
@@ -98,4 +154,6 @@ public class Antenna {
     {
         return A * Math.sin((2 * Math.PI / T) * t);
     }
+
+    // </editor-fold>
 }

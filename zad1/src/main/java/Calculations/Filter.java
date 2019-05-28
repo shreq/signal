@@ -21,20 +21,9 @@ public class Filter {
     }
 
     public static TreeMap<BigDecimal, Double> lowpass(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window) {
+        Antenna.shift(signal, 0.012);
+
         return filter(signal, m, f0, fp, window, fp / f0);
-    }
-
-    @Deprecated
-    public static TreeMap<BigDecimal, Double> lowpass0(TreeMap<BigDecimal, Double> signal, double smoothing) {
-        TreeMap<BigDecimal, Double> result = new TreeMap<>();
-        Double value = 0.0;
-
-        for (Map.Entry<BigDecimal, Double> entry : signal.entrySet()) {
-            value += (entry.getValue() - value) / smoothing;
-            result.put(entry.getKey(), value);
-        }
-
-        return result;
     }
 
     public static TreeMap<BigDecimal, Double> midpass(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window) {

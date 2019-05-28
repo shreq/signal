@@ -54,7 +54,7 @@ public class FilterDialog extends JDialog {
     }
 
     private void onOK() {
-        // TODO: add choice of filter type
+        // TODO: add choice of filter & window types
         TreeMap<BigDecimal, Double> result = Filter.lowpass(signal, Integer.parseInt(mField.getText()),
                 Double.parseDouble(f0Field.getText()),
                 Double.parseDouble(fpField.getText()),
