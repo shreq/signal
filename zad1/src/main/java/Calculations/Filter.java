@@ -21,8 +21,6 @@ public class Filter {
     }
 
     public static TreeMap<BigDecimal, Double> lowpass(TreeMap<BigDecimal, Double> signal, int m, double f0, double fp, Window window) {
-        Antenna.shift(signal, 0.012);
-
         return filter(signal, m, f0, fp, window, fp / f0);
     }
 
