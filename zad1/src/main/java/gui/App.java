@@ -217,6 +217,7 @@ public class App implements ItemListener {
         JButton correlation = new JButton("Correlation");
         JButton convolution = new JButton("Convolution");
         JButton filter = new JButton("Filter");
+        JButton antena = new JButton("Antena");
 
         save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, currentName));
         load.addActionListener(e -> {
@@ -291,6 +292,11 @@ public class App implements ItemListener {
             dialog.pack();
             dialog.setVisible(true);
         });
+        antena.addActionListener(e->{
+            AntenaDialog dialog = new AntenaDialog();
+            dialog.pack();
+            dialog.setVisible(true);
+        });
 
         GroupLayout.SequentialGroup firstRowHoriz = layout.createSequentialGroup();
         GroupLayout.ParallelGroup firstRowVert = layout.createParallelGroup();
@@ -319,6 +325,7 @@ public class App implements ItemListener {
         fourthRowHoriz.addComponent(correlation);   fourthRowVert.addComponent(correlation);
         fourthRowHoriz.addComponent(convolution);   fourthRowVert.addComponent(convolution);
         fourthRowHoriz.addComponent(filter);        fourthRowVert.addComponent(filter);
+        fourthRowHoriz.addComponent(antena);        fourthRowVert.addComponent(antena);
 
         mainHoriz.addGroup(firstRowHoriz);
         mainHoriz.addGroup(secondRowHoriz);

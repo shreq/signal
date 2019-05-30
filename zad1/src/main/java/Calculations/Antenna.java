@@ -1,5 +1,6 @@
 package Calculations;
 
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -10,7 +11,7 @@ public class Antenna {
     private long T;
 
     private double objVelocity;
-    private boolean active;
+    public boolean active;
     private double startingDistance;
 
     double distance;
@@ -25,14 +26,14 @@ public class Antenna {
         this.startingDistance = startingDistance;
     }
 
-    public void simulate() throws InterruptedException {
+    public void simulate(JLabel label) throws InterruptedException {
         while (active) {
             TreeMap<BigDecimal, Double> shifted = shift(signal, -calculateShift());
             TreeMap<BigDecimal, Double> correlation = Correlation.correlate(signal, shifted);
 
             double time = getKeyForMaximum(correlation);
             distance = velocity * time / 2.0;
-
+            label.setText(Double.toString(distance));
             Thread.sleep(T);
             timer += T;
         }
