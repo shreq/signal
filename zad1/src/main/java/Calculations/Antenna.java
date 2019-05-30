@@ -28,7 +28,8 @@ public class Antenna {
 
     public void simulate(JLabel label) throws InterruptedException {
         while (active) {
-            TreeMap<BigDecimal, Double> shifted = shift(signal, -calculateShift());
+            double shift = calculateShift();
+            TreeMap<BigDecimal, Double> shifted = shift(signal, -shift);
             TreeMap<BigDecimal, Double> correlation = Correlation.correlate(signal, shifted);
 
             double time = getKeyForMaximum(correlation);
@@ -40,7 +41,7 @@ public class Antenna {
     }
 
     private double calculateShift() {
-        return (startingDistance / velocity) + (objVelocity * timer / velocity);
+        return 2 * ((startingDistance / velocity) + (objVelocity * (timer / 1000.0) / velocity));
     }
 
     private static TreeMap<BigDecimal, Double> shift(TreeMap<BigDecimal, Double> signal, double time) {
@@ -51,7 +52,7 @@ public class Antenna {
         BigDecimal t0 = signal.firstKey();
 
         if (time > 0.0) {
-            BigDecimal tx = roundToClosestKey(signal.keySet(), time, 3);
+            BigDecimal tx = roundToClosestKey(signal.keySet(), time, 2);
             for (int i = 0; i < signal.size(); i++) {
                 result.put(t0, signal.get(tx));
                 t0 = t0.add(T);
@@ -59,7 +60,7 @@ public class Antenna {
             }
         }
         else {
-            BigDecimal tx = roundToClosestKey(signal.keySet(), signal.lastKey().doubleValue() + time, 3);
+            BigDecimal tx = roundToClosestKey(signal.keySet(), signal.lastKey().doubleValue() + time, 2);
             for (int i = 0; i < signal.size(); i++) {
                 result.put(t0, signal.get(tx));
                 t0 = t0.add(T);
@@ -89,6 +90,7 @@ public class Antenna {
         for (int i = map.size() / 2; i < map.size(); i++) {
             if (values[i] > maxV) {
                 maxK = keys[i];
+                maxV = values[i];
             }
         }
 

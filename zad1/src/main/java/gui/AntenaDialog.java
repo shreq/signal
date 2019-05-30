@@ -1,6 +1,8 @@
 package gui;
 
 import Calculations.Antenna;
+import Calculations.Operator;
+import Signals.NoiseGaussian;
 import Signals.SignalSinusoidal;
 
 import javax.swing.*;
@@ -54,12 +56,13 @@ public class AntenaDialog extends JDialog {
         double startingDistance = Double.parseDouble(startingDistanceField.getText());
         long refreshPeriod = Long.parseLong(refreshPeriodField.getText());
 
-        antenna = new Antenna(new SignalSinusoidal(1, 0, 10, 0.05).generate(1000), velocity, refreshPeriod, objectVelocity, true, startingDistance);
+        //antenna = new Antenna(new SignalSinusoidal(1, 0, 10, 1).generate(100), velocity, refreshPeriod, objectVelocity, true, startingDistance);
+        antenna = new Antenna(Operator.Addition(new SignalSinusoidal(1, 0, 10, 5).generate(100), new SignalSinusoidal(1, 0, 10, 2).generate(100)), velocity, refreshPeriod, objectVelocity, true, startingDistance);
 
         Thread thread = new Thread(() -> {
             try {
                 antenna.simulate(distanceLabel);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
