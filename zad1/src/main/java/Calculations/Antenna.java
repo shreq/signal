@@ -49,11 +49,22 @@ public class Antenna {
         BigDecimal T = keys.get(1).subtract(keys.get(0));
 
         BigDecimal t0 = signal.firstKey();
-        BigDecimal tx = roundToClosestKey(signal.keySet(), time, 3);
-        for (int i = 0; i < signal.size(); i++) {
-            result.put(t0, signal.get(tx));
-            t0 = t0.add(T);
-            tx = tx.compareTo(signal.lastKey()) >= 0 ? signal.firstKey() : tx.add(T);
+
+        if (time > 0.0) {
+            BigDecimal tx = roundToClosestKey(signal.keySet(), time, 3);
+            for (int i = 0; i < signal.size(); i++) {
+                result.put(t0, signal.get(tx));
+                t0 = t0.add(T);
+                tx = tx.compareTo(signal.lastKey()) >= 0 ? signal.firstKey() : tx.add(T);
+            }
+        }
+        else {
+            BigDecimal tx = roundToClosestKey(signal.keySet(), signal.lastKey().doubleValue() + time, 3);
+            for (int i = 0; i < signal.size(); i++) {
+                result.put(t0, signal.get(tx));
+                t0 = t0.add(T);
+                tx = tx.compareTo(signal.lastKey()) >= 0 ? signal.firstKey() : tx.add(T);
+            }
         }
 
         return result;

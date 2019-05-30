@@ -89,7 +89,7 @@ public class FilterDialog extends JDialog {
         }
         TreeMap<BigDecimal, Double> siema = Convolution.convolve(result, signal);
         Utils.drawSignal("Filtr", result);
-        Utils.drawSignal("Filtr po splocie", siema);
+        Utils.drawSignal("Sygnał po filtracji", siema);
         dispose();
     }
 
