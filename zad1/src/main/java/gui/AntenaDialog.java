@@ -1,6 +1,7 @@
 package gui;
 
 import Calculations.Antenna;
+import Signals.SignalSinusoidal;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -9,7 +10,6 @@ public class AntenaDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JComboBox selectBox;
     private JTextField signalVelocityField;
     private JTextField objectVelocityField;
     private JTextField startingDistanceField;
@@ -54,7 +54,7 @@ public class AntenaDialog extends JDialog {
         double startingDistance = Double.parseDouble(startingDistanceField.getText());
         long refreshPeriod = Long.parseLong(refreshPeriodField.getText());
 
-        antenna = new Antenna(null, velocity, refreshPeriod, objectVelocity, true, startingDistance);
+        antenna = new Antenna(new SignalSinusoidal(1, 0, 10, 0.05).generate(1000), velocity, refreshPeriod, objectVelocity, true, startingDistance);
 
         Thread thread = new Thread(() -> {
             try {
@@ -63,7 +63,7 @@ public class AntenaDialog extends JDialog {
                 e.printStackTrace();
             }
         });
-        dispose();
+        thread.start();
     }
 
     private void onCancel() {
