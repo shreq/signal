@@ -5,13 +5,14 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class Antenna {
+    private static int PRECISION = 2;
 
     private TreeMap<BigDecimal, Double> signal;
     private double velocity;
     private long T;
 
     private double objVelocity;
-    public boolean active;
+    public boolean active = false;
     private double startingDistance;
 
     double distance;
@@ -28,13 +29,13 @@ public class Antenna {
 
     public void simulate(JLabel label) throws InterruptedException {
         while (active) {
-            double shift = calculateShift();
-            TreeMap<BigDecimal, Double> shifted = shift(signal, -shift);
+            double shift = calculateShift() % signal.lastKey().doubleValue();
+            TreeMap<BigDecimal, Double> shifted = shift(signal, shift);
             TreeMap<BigDecimal, Double> correlation = Correlation.correlate(signal, shifted);
 
-            double time = getKeyForMaximum(correlation);
+            double time = getKeyForMaximum(correlation) - getKeyForMiddle(correlation);
             distance = velocity * time / 2.0;
-            label.setText(Double.toString(distance));
+            label.setText(Double.toString(((int) (distance * 100000.0)) / 100000.0));
             Thread.sleep(T);
             timer += T;
         }
@@ -51,6 +52,9 @@ public class Antenna {
 
         BigDecimal t0 = signal.firstKey();
 
+        if (time == 0.0) {
+            return signal;
+        }
         if (time > 0.0) {
             BigDecimal tx = roundToClosestKey(signal.keySet(), time, 2);
             for (int i = 0; i < signal.size(); i++) {
@@ -95,5 +99,9 @@ public class Antenna {
         }
 
         return maxK.doubleValue();
+    }
+
+    private double getKeyForMiddle(TreeMap<BigDecimal, Double> map) {
+        return map.keySet().toArray(new BigDecimal[0])[map.size() / 2].doubleValue();
     }
 }

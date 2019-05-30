@@ -51,13 +51,16 @@ public class AntenaDialog extends JDialog {
     }
 
     private void onOK() {
+        if (antenna != null && antenna.active) {
+            return;
+        }
+
         double velocity = Double.parseDouble(signalVelocityField.getText());
         double objectVelocity = Double.parseDouble(objectVelocityField.getText());
         double startingDistance = Double.parseDouble(startingDistanceField.getText());
         long refreshPeriod = Long.parseLong(refreshPeriodField.getText());
 
-        //antenna = new Antenna(new SignalSinusoidal(1, 0, 10, 1).generate(100), velocity, refreshPeriod, objectVelocity, true, startingDistance);
-        antenna = new Antenna(Operator.Addition(new SignalSinusoidal(1, 0, 10, 5).generate(100), new SignalSinusoidal(1, 0, 10, 2).generate(100)), velocity, refreshPeriod, objectVelocity, true, startingDistance);
+        antenna = new Antenna(Operator.Addition(new SignalSinusoidal(1, 0, 10, 0.5).generate(100), new SignalSinusoidal(1, 0, 10, 2).generate(100)), velocity, refreshPeriod, objectVelocity, true, startingDistance);
 
         Thread thread = new Thread(() -> {
             try {
