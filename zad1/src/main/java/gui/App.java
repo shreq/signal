@@ -305,6 +305,7 @@ public class App implements ItemListener {
         });
         kurier1.addActionListener(e->{
             ArrayList<Complex> result = Fourier.discreteFourierTransform(currentData);
+            JOptionPane.showMessageDialog(null, "Time: " + Fourier.timeDFT + "ms");
             try {
                 Serialization.Serialize(result, "kurier1");
             } catch (IOException ex) {
@@ -313,8 +314,9 @@ public class App implements ItemListener {
         });
         kurier2.addActionListener(e->{
             ArrayList<Complex> result = Fourier.fastFourierTransform(currentData);
+            JOptionPane.showMessageDialog(null, "Time: " + Fourier.timeFFT + "ms");
             try {
-                Serialization.Serialize(result, "kurier1");
+                Serialization.Serialize(result, "kurier2");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
