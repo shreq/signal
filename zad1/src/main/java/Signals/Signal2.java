@@ -8,7 +8,6 @@ public class Signal2 implements Signal {
 
     public BigDecimal t1;
     public BigDecimal d;
-    public BigDecimal T;
 
     @Override
     public TreeMap<BigDecimal, Double> generate(BigDecimal fs) {
@@ -35,6 +34,8 @@ public class Signal2 implements Signal {
 
     @Override
     public void setAllFields(double... params) {
+        this.t1 = new BigDecimal(params[0]);
+        this.d = new BigDecimal(params[1]);
 
     }
 }
