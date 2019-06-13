@@ -22,6 +22,8 @@ public class ComplexDialog extends JDialog {
     private JButton chart1Button;
     private JButton chart2Button;
     private JButton backwardWaveletButton;
+    private JButton backwardDFTButton;
+    private JButton backwardFFTButton;
 
     public ComplexDialog() {
         setContentPane(contentPane);
@@ -67,6 +69,13 @@ public class ComplexDialog extends JDialog {
             Utils.drawSignal("Backward wavelet transform", result);
         });
 
+        backwardDFTButton.addActionListener(e->{
+            //todo
+        });
+
+        backwardFFTButton.addActionListener(e->{
+            //todo
+        });
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
