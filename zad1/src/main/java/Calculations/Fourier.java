@@ -12,11 +12,11 @@ public class Fourier {
     public static long timeDFT;
     public static long timeFFT;
 
-    public static List<Complex> discreteFourierTransform(TreeMap<BigDecimal, Double> signal) {
+    public static ArrayList<Complex> discreteFourierTransform(TreeMap<BigDecimal, Double> signal) {
         Double[] values = signal.values().toArray(new Double[0]);
 
-        List<Complex> points = toComplex(values);
-        List<Complex> result = new ArrayList<>();
+        ArrayList<Complex> points = toComplex(values);
+        ArrayList<Complex> result = new ArrayList<>();
 
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < points.size(); i++) {
@@ -43,7 +43,7 @@ public class Fourier {
                 real += points.get(j).multiply(reverseCoreFactor(i, j, points.size())).getReal();
             }
 
-            result.put(i, real);
+            result.put(new BigDecimal(i), real);
         }
 
         return result;
@@ -64,8 +64,8 @@ public class Fourier {
         return result;
     }
 
-    private static List<Complex> toComplex(Double[] array) {
-        List<Complex> result = new ArrayList<>();
+    private static ArrayList<Complex> toComplex(Double[] array) {
+        ArrayList<Complex> result = new ArrayList<>();
 
         for (Double number : array) {
             result.add(new Complex(number, 0));
