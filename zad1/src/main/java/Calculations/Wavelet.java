@@ -1,10 +1,10 @@
 package Calculations;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.complex.Complex;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Wavelet {
@@ -41,5 +41,53 @@ public class Wavelet {
         }
 
         return result;
+    }
+
+    public static TreeMap<BigDecimal, Double> backward(ArrayList<Complex> signal){
+        List<Double> reversedH = Arrays.asList(ArrayUtils.toObject(H));
+        List<Double> reversedG = Arrays.asList(ArrayUtils.toObject(G));
+        Collections.reverse(reversedH);
+        Collections.reverse(reversedG);
+
+        ArrayList<Double> xH = new ArrayList<>();
+        ArrayList<Double> xG = new ArrayList<>();
+
+        for(int i = 0; i < signal.size(); i++){
+            xH.add(signal.get(i).getReal());
+            xH.add(0.0);
+            xG.add(0.0);
+            xG.add(signal.get(i).getImaginary());
+        }
+        TreeMap<BigDecimal, Double> treeH = new TreeMap<>();
+        TreeMap<BigDecimal, Double> treeG = new TreeMap<>();
+        for(int i = 0; i < H.length; i++){
+            treeH.put(new BigDecimal(i), reversedH.get(i));
+            treeG.put(new BigDecimal(i), reversedG.get(i));
+        }
+        TreeMap<BigDecimal, Double> treeXH = new TreeMap<>();
+        TreeMap<BigDecimal, Double> treeXG = new TreeMap<>();
+        for(int i = 0; i < xH.size(); i++){
+            treeXH.put(new BigDecimal(i), xH.get(i));
+            treeXG.put(new BigDecimal(i), xG.get(i));
+        }
+        treeXH = Convolution.convolve(treeXH, treeH);
+        treeXG = Convolution.convolve(treeXG, treeG);
+        TreeMap<BigDecimal, Double> treeXHtrimmed = new TreeMap<>();
+        TreeMap<BigDecimal, Double> treeXGtrimmed = new TreeMap<>();
+        int i = 0;
+        for(Map.Entry<BigDecimal, Double> e : treeXH.entrySet()){
+            if(i >= xH.size())
+                break;
+            treeXHtrimmed.put(e.getKey(), e.getValue());
+            i++;
+        }
+        i = 0;
+        for(Map.Entry<BigDecimal, Double> e : treeXG.entrySet()){
+            if(i >= xG.size())
+                break;
+            treeXGtrimmed.put(e.getKey(), e.getValue());
+            i++;
+        }
+        return Operator.Addition(treeXHtrimmed, treeXGtrimmed);
     }
 }
