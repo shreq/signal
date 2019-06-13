@@ -3,6 +3,7 @@ package gui;
 import Calculations.*;
 import Charts.Utils;
 import Signals.*;
+import org.apache.commons.math3.complex.Complex;
 import serialization.Serialization;
 import serialization.SerializationModel;
 
@@ -17,10 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 public class App implements ItemListener {
 
@@ -218,6 +216,10 @@ public class App implements ItemListener {
         JButton convolution = new JButton("Convolution");
         JButton filter = new JButton("Filter");
         JButton antena = new JButton("Antena");
+        JButton kurier1 = new JButton("Kurier1");
+        JButton kurier2 = new JButton("Kurier2");
+        JButton wavelet = new JButton("Wavelet");
+        JButton complex = new JButton("Complex");
 
         save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, currentName));
         load.addActionListener(e -> {
@@ -297,6 +299,21 @@ public class App implements ItemListener {
             dialog.pack();
             dialog.setVisible(true);
         });
+        kurier1.addActionListener(e->{
+            //todo
+        });
+        kurier2.addActionListener(e->{
+            //todo
+        });
+        wavelet.addActionListener(e->{
+            ArrayList<Complex> result = Wavelet.transfrom(currentData);
+            try {
+                Serialization.Serialize(result, "wavelet");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        complex.addActionListener(e-> ComplexDialog.showDialog());
 
         GroupLayout.SequentialGroup firstRowHoriz = layout.createSequentialGroup();
         GroupLayout.ParallelGroup firstRowVert = layout.createParallelGroup();
@@ -327,14 +344,23 @@ public class App implements ItemListener {
         fourthRowHoriz.addComponent(filter);        fourthRowVert.addComponent(filter);
         fourthRowHoriz.addComponent(antena);        fourthRowVert.addComponent(antena);
 
+        GroupLayout.SequentialGroup fifthRowHoriz = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup fifthRowVert = layout.createParallelGroup();
+        fifthRowHoriz.addComponent(kurier1);   fifthRowVert.addComponent(kurier1);
+        fifthRowHoriz.addComponent(kurier2);   fifthRowVert.addComponent(kurier2);
+        fifthRowHoriz.addComponent(wavelet);   fifthRowVert.addComponent(wavelet);
+        fifthRowHoriz.addComponent(complex);   fifthRowVert.addComponent(complex);
+
         mainHoriz.addGroup(firstRowHoriz);
         mainHoriz.addGroup(secondRowHoriz);
         mainHoriz.addGroup(thirdRowHoriz);
         mainHoriz.addGroup(fourthRowHoriz);
+        mainHoriz.addGroup(fifthRowHoriz);
         mainVert.addGroup(firstRowVert);
         mainVert.addGroup(secondRowVert);
         mainVert.addGroup(thirdRowVert);
         mainVert.addGroup(fourthRowVert);
+        mainVert.addGroup(fifthRowVert);
         // endregion
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -419,7 +445,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(550, 300);
+        frame.setSize(550, 325);
         frame.setVisible(true);
     }
 
