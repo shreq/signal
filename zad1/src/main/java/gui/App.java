@@ -34,6 +34,7 @@ public class App implements ItemListener {
     private final static String SIGNAL9 = "StepUnit";
     private final static String SIGNAL10 = "NoiseImpulse";
     private final static String SIGNAL11 = "ImpulseUnit";
+    private final static String SIGNAL12 = "S2";
 
     private TreeMap<BigDecimal, Double> currentData;
     private double currentFs;
@@ -153,7 +154,7 @@ public class App implements ItemListener {
     private void addComponentToPane(Container pane) {
 
         JPanel comboBoxPane = new JPanel();
-        String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10, SIGNAL11};
+        String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10, SIGNAL11, SIGNAL12};
         JComboBox<String> cb = new JComboBox<>(comboBoxItems);
         cb.setEditable(false);
         cb.addItemListener(this);
@@ -183,6 +184,8 @@ public class App implements ItemListener {
         cardsArray.add(createCard(NoiseImpulse.class, "A", "t1", "d", "p"));
         // ImpulseUnit
         cardsArray.add(createCard(ImpulseUnit.class, "A", "ns", "n1", "d"));
+        // S2
+        cardsArray.add(createCard(Signal2.class, "t1", "d"));
         // endregion
 
         // create the panel that contains the cards
