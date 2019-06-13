@@ -1,5 +1,6 @@
 package Charts;
 
+import org.apache.commons.math3.complex.Complex;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -12,6 +13,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,11 +26,26 @@ public class Utils {
         XYSeriesCollection dataset = new XYSeriesCollection();
 
         for (Map.Entry<BigDecimal, Double> entry : map.entrySet()) {
-            Map.Entry pair = entry;
-            series.add(new BigDecimal(pair.getKey().toString()), (double) pair.getValue());
+            series.add(new BigDecimal(((Map.Entry) entry).getKey().toString()), (double) ((Map.Entry) entry).getValue());
         }
 
         dataset.addSeries(series);
+        return dataset;
+    }
+
+    public static XYDataset createDatasetSignal(ArrayList<Complex> signal) {
+        XYSeries series1 = new XYSeries("series1");
+        XYSeries series2 = new XYSeries("series2");
+        XYSeriesCollection dataset = new XYSeriesCollection();
+
+        for (int i = 0; i < signal.size(); i++) {
+
+            series1.add(i, signal.get(i).getReal());
+            series2.add(i, signal.get(i).getImaginary());
+        }
+
+        dataset.addSeries(series1);
+        dataset.addSeries(series2);
         return dataset;
     }
 
@@ -83,5 +100,15 @@ public class Utils {
             );
             showChart(chart);
         }
+    }
+
+    public static void drawComplex(String name, ArrayList<Complex> signal){
+
+        XYDataset dataset = createDatasetSignal(signal);
+        JFreeChart chart= ChartFactory.createXYLineChart(
+                name, "", "", dataset,  PlotOrientation.VERTICAL,
+                true, true, false
+        );
+        showChart(chart);
     }
 }

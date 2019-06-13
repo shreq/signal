@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 
 public class App implements ItemListener {
 
@@ -303,10 +304,20 @@ public class App implements ItemListener {
             dialog.setVisible(true);
         });
         kurier1.addActionListener(e->{
-            //todo
+            ArrayList<Complex> result = Fourier.discreteFourierTransform(currentData);
+            try {
+                Serialization.Serialize(result, "kurier1");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
         kurier2.addActionListener(e->{
-            //todo
+            ArrayList<Complex> result = Fourier.fastFourierTransform(currentData);
+            try {
+                Serialization.Serialize(result, "kurier1");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
         wavelet.addActionListener(e->{
             ArrayList<Complex> result = Wavelet.transfrom(currentData);
