@@ -1,5 +1,6 @@
 package gui;
 
+import Calculations.Fourier;
 import Calculations.Wavelet;
 import Charts.Utils;
 import org.apache.commons.math3.complex.Complex;
@@ -66,15 +67,29 @@ public class ComplexDialog extends JDialog {
                 ex.printStackTrace();
             }
             TreeMap<BigDecimal, Double> result = Wavelet.backward(complex);
-            Utils.drawSignal("Backward wavelet transform", result);
+            Utils.drawSignal("Inverse wavelet transform", result);
         });
 
         backwardDFTButton.addActionListener(e->{
-            //todo
+            ArrayList<Complex> complex = new ArrayList<>();
+            try {
+                complex = (ArrayList<Complex>) Serialization.Deserialize(loadTextField.getText());
+            } catch (ClassNotFoundException | IOException ex) {
+                ex.printStackTrace();
+            }
+            TreeMap<BigDecimal, Double> result = Fourier.discreteFourierTransformBackward(complex);
+            Utils.drawSignal("Inverse DFT transform", result);
         });
 
         backwardFFTButton.addActionListener(e->{
-            //todo
+            ArrayList<Complex> complex = new ArrayList<>();
+            try {
+                complex = (ArrayList<Complex>) Serialization.Deserialize(loadTextField.getText());
+            } catch (ClassNotFoundException | IOException ex) {
+                ex.printStackTrace();
+            }
+            TreeMap<BigDecimal, Double> result = Fourier.fastFourierTransformBackward(complex);
+            Utils.drawSignal("Inverse FFT transform", result);
         });
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
