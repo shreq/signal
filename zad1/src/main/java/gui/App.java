@@ -314,6 +314,7 @@ public class App implements ItemListener {
         });
         kurier2.addActionListener(e->{
             ArrayList<Complex> result = Fourier.fastFourierTransform(currentData);
+            result.removeAll(Collections.singleton(null));
             JOptionPane.showMessageDialog(null, "Time: " + Fourier.timeFFT + "ms");
             try {
                 Serialization.Serialize(result, "kurier2");

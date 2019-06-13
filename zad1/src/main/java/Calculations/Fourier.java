@@ -53,21 +53,21 @@ public class Fourier {
         return result;
     }
 
-    public static ArrayList<Complex> fastFourierTransform(TreeMap<BigDecimal, Double> signal) {
-        Double[] values = signal.values().toArray(new Double[0]);
-        ArrayList<Complex> points = toComplex(values);
+//    public static ArrayList<Complex> fastFourierTransform(TreeMap<BigDecimal, Double> signal) {
+//        Double[] values = signal.values().toArray(new Double[0]);
+//        ArrayList<Complex> points = toComplex(values);
+//
+//        long startTime = System.currentTimeMillis();
+//        ArrayList<Complex> result = switchSamples(points, false);
+//        for (int i = 0; i < result.size(); i++) {
+//            result.set(i, result.get(i).divide(points.size()));
+//        }
+//        timeFFT = System.currentTimeMillis() - startTime;
+//
+//        return result;
+//    }
 
-        long startTime = System.currentTimeMillis();
-        ArrayList<Complex> result = switchSamples(points, false);
-        for (int i = 0; i < result.size(); i++) {
-            result.set(i, result.get(i).divide(points.size()));
-        }
-        timeFFT = System.currentTimeMillis() - startTime;
-
-        return result;
-    }
-
-    /*public static ArrayList<Complex> fastFourierTransform(ArrayList<Complex> points) {
+    public static ArrayList<Complex> fastFourierTransform(ArrayList<Complex> points) {
         if (points.size() < 2) {
             return points;
         }
@@ -79,8 +79,8 @@ public class Fourier {
             Complex x = points.get(i);
             Complex y = points.get(i + points.size() / 2);
 
-            evens.add(points.get(i).add(points.get(i + points.size() / 2)));
-            odds.add(points.get(i).subtract(points.get(i + points.size() / 2)).multiply(coreFactor(i, 1, points.size())));
+            evens.add(x.add(y));
+            odds.add(x.subtract(y).multiply(coreFactor(i, 1, points.size())));
         }
 
         ArrayList<Complex> xevensx = fastFourierTransform(evens);
@@ -92,12 +92,13 @@ public class Fourier {
             result.set(2 * i + 1, xoddsx.get(i));
         }
 
+
         return new ArrayList<>(result);
     }
 
     public static ArrayList<Complex> fastFourierTransform(TreeMap<BigDecimal, Double> signal) {
         return fastFourierTransform(toComplex(signal.values().toArray(new Double[0])));
-    }*/
+    }
 
     public static TreeMap<BigDecimal, Double> fastFourierTransformBackward(List<Complex> points) {
         long startTime = System.currentTimeMillis();
