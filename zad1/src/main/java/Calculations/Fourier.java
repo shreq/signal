@@ -36,6 +36,7 @@ public class Fourier {
     public static TreeMap<BigDecimal, Double> discreteFourierTransformBackward(List<Complex> points) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < points.size(); i++) {
             double real = 0;
 
@@ -45,23 +46,28 @@ public class Fourier {
 
             result.put(new BigDecimal(i), real);
         }
+        timeDFT = System.currentTimeMillis() - startTime;
 
         return result;
     }
 
-    public static TreeMap<BigDecimal, Double> fastFourierTransform(TreeMap<BigDecimal, Double> signal) {
-        BigDecimal[] keys = signal.keySet().toArray(new BigDecimal[0]);
+    public static ArrayList<Complex> fastFourierTransform(TreeMap<BigDecimal, Double> signal) {
         Double[] values = signal.values().toArray(new Double[0]);
 
-        TreeMap<BigDecimal, Double> result = new TreeMap<>();
+        ArrayList<Complex> points = toComplex(values);
+        ArrayList<Complex> result = new ArrayList<>();
 
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < keys.length; i++) {
+        for (int i = 0; i < points.size(); i++) {
 
         }
         timeFFT = System.currentTimeMillis() - startTime;
 
         return result;
+    }
+
+    public static TreeMap<BigDecimal, Double> fastFourierTransformBackward(List<Complex> points) {
+        return null;
     }
 
     private static ArrayList<Complex> toComplex(Double[] array) {
