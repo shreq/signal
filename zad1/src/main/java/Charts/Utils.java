@@ -37,11 +37,25 @@ public class Utils {
         XYSeries series1 = new XYSeries("series1");
         XYSeries series2 = new XYSeries("series2");
         XYSeriesCollection dataset = new XYSeriesCollection();
-
         for (int i = 0; i < signal.size(); i++) {
 
             series1.add(i, signal.get(i).getReal());
             series2.add(i, signal.get(i).getImaginary());
+        }
+
+        dataset.addSeries(series1);
+        dataset.addSeries(series2);
+        return dataset;
+    }
+
+    public static XYDataset createDatasetSignal2(ArrayList<Complex> signal) {
+        XYSeries series1 = new XYSeries("series1");
+        XYSeries series2 = new XYSeries("series2");
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        for (int i = 0; i < signal.size(); i++) {
+
+            series1.add(i, signal.get(i).abs());
+            series2.add(i, signal.get(i).getArgument());
         }
 
         dataset.addSeries(series1);
@@ -105,6 +119,16 @@ public class Utils {
     public static void drawComplex(String name, ArrayList<Complex> signal){
 
         XYDataset dataset = createDatasetSignal(signal);
+        JFreeChart chart= ChartFactory.createXYLineChart(
+                name, "", "", dataset,  PlotOrientation.VERTICAL,
+                true, true, false
+        );
+        showChart(chart);
+    }
+
+    public static void drawComplex2(String name, ArrayList<Complex> signal){
+
+        XYDataset dataset = createDatasetSignal2(signal);
         JFreeChart chart= ChartFactory.createXYLineChart(
                 name, "", "", dataset,  PlotOrientation.VERTICAL,
                 true, true, false

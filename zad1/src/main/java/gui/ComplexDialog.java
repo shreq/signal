@@ -56,7 +56,13 @@ public class ComplexDialog extends JDialog {
         });
 
         chart2Button.addActionListener(e->{
-            //todo
+            ArrayList<Complex> complex = new ArrayList<>();
+            try {
+                complex = (ArrayList<Complex>) Serialization.Deserialize(loadTextField.getText());
+            } catch (ClassNotFoundException | IOException ex) {
+                ex.printStackTrace();
+            }
+            Utils.drawComplex2("Complex signal", complex);
         });
 
         backwardWaveletButton.addActionListener(e->{
