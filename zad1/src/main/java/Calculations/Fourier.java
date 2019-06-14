@@ -53,20 +53,6 @@ public class Fourier {
         return result;
     }
 
-//    public static ArrayList<Complex> fastFourierTransform(TreeMap<BigDecimal, Double> signal) {
-//        Double[] values = signal.values().toArray(new Double[0]);
-//        ArrayList<Complex> points = toComplex(values);
-//
-//        long startTime = System.currentTimeMillis();
-//        ArrayList<Complex> result = switchSamples(points, false);
-//        for (int i = 0; i < result.size(); i++) {
-//            result.set(i, result.get(i).divide(points.size()));
-//        }
-//        timeFFT = System.currentTimeMillis() - startTime;
-//
-//        return result;
-//    }
-
     public static ArrayList<Complex> fastFourierTransform(ArrayList<Complex> points) {
         if (points.size() < 2) {
             return points;
@@ -91,7 +77,6 @@ public class Fourier {
             result.set(2 * i, xevensx.get(i));
             result.set(2 * i + 1, xoddsx.get(i));
         }
-
 
         return new ArrayList<>(result);
     }

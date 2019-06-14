@@ -15,7 +15,7 @@ public class Signal2 implements Signal {
 
         BigDecimal tx = t1.add(d);
         BigDecimal Ts = new BigDecimal(1).divide(fs, SCALE, RoundingMode.CEILING);
-        for (BigDecimal t = t1; t.compareTo(tx) <= 0; t = t.add(Ts)) {
+        for (BigDecimal t = t1; t.compareTo(tx) < 0; t = t.add(Ts)) {
             map.put(t, 2.0 * Math.sin(Math.PI * t.doubleValue()) + Math.sin(2.0 * Math.PI * t.doubleValue()) + 5.0 * Math.sin(4.0 * Math.PI * t.doubleValue()));
         }
 

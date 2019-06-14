@@ -220,8 +220,8 @@ public class App implements ItemListener {
         JButton convolution = new JButton("Convolution");
         JButton filter = new JButton("Filter");
         JButton antena = new JButton("Antena");
-        JButton kurier1 = new JButton("Kurier1");
-        JButton kurier2 = new JButton("Kurier2");
+        JButton kurier1 = new JButton("DFT");
+        JButton kurier2 = new JButton("FFT");
         JButton wavelet = new JButton("Wavelet");
         JButton complex = new JButton("Complex");
 
@@ -307,17 +307,19 @@ public class App implements ItemListener {
             ArrayList<Complex> result = Fourier.discreteFourierTransform(currentData);
             JOptionPane.showMessageDialog(null, "Time: " + Fourier.timeDFT + "ms");
             try {
-                Serialization.Serialize(result, "kurier1");
+                Serialization.Serialize(result, "DFT");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         });
         kurier2.addActionListener(e->{
+            long startTime = System.currentTimeMillis();
             ArrayList<Complex> result = Fourier.fastFourierTransform(currentData);
+            Fourier.timeFFT = System.currentTimeMillis() - startTime;
             result.removeAll(Collections.singleton(null));
             JOptionPane.showMessageDialog(null, "Time: " + Fourier.timeFFT + "ms");
             try {
-                Serialization.Serialize(result, "kurier2");
+                Serialization.Serialize(result, "FFT");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
