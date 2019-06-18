@@ -1,40 +1,46 @@
 package Calculations;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 public class Convolution {
 
-    public static TreeMap<BigDecimal, Double> convolute(TreeMap<BigDecimal, Double> signalA, TreeMap<BigDecimal, Double> signalB) {
+    public static TreeMap<BigDecimal, Double> convolve(TreeMap<BigDecimal, Double> signalA, TreeMap<BigDecimal, Double> signalB) {
         Double[] valuesA = signalA.values().toArray(new Double[0]);
         Double[] valuesB = signalB.values().toArray(new Double[0]);
+        BigDecimal[] keys = signalA.keySet().toArray(new BigDecimal[0]);
 
-        Double[] vec = new Double[valuesA.length + valuesB.length - 1];
-        Arrays.fill(vec, 0.0);
-        for (int i = 0; i < valuesA.length; i++) {
-            vec[i + (int) Math.ceil(valuesB.length / 2)] = valuesA[i];
-        }
+        int samples = valuesA.length + valuesB.length - 1;
+        BigDecimal T = keys[1].subtract(keys[0]);
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = 0; i < samples; i++) {
+            int left = 0;
+            int right = i;
+            double val = 0.0;
 
-        Double[] result = new Double[valuesA.length];
-        int end = 0;
-        while (end < valuesA.length) {
-            double sum = 0.0;
-            for (int i = 0; i < valuesB.length; i++) {
-                sum += valuesB[i] * vec[end + i];
+            while (left < valuesA.length && right >= 0) {
+                if (right < valuesB.length) {
+                    val += valuesA[left] * valuesB[right];
+                }
+                left++;
+                right--;
             }
-            result[end] = sum;
-            end++;
+            
+            result.add(val);
         }
 
-        return join(signalA.keySet().toArray(new BigDecimal[0]), result);
+        return join(result, keys[0], T);
     }
 
-    private static TreeMap<BigDecimal, Double> join(BigDecimal[] keys, Double[] values) {
+    private static TreeMap<BigDecimal, Double> join(List<Double> values, BigDecimal t0, BigDecimal T) {
         TreeMap<BigDecimal, Double> result = new TreeMap<>();
 
-        for (int i = 0; i < keys.length; i++) {
-            result.put(keys[i], values[i]);
+        BigDecimal tx = t0;
+        for (Double value : values) {
+            result.put(tx, value);
+            tx = tx.add(T);
         }
 
         return result;

@@ -1,9 +1,9 @@
 package gui;
 
-import Calculations.Calculator;
-import Calculations.Operator;
+import Calculations.*;
 import Charts.Utils;
 import Signals.*;
+import org.apache.commons.math3.complex.Complex;
 import serialization.Serialization;
 import serialization.SerializationModel;
 
@@ -18,10 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
+import java.util.List;
 
 public class App implements ItemListener {
 
@@ -37,6 +35,7 @@ public class App implements ItemListener {
     private final static String SIGNAL9 = "StepUnit";
     private final static String SIGNAL10 = "NoiseImpulse";
     private final static String SIGNAL11 = "ImpulseUnit";
+    private final static String SIGNAL12 = "S2";
 
     private TreeMap<BigDecimal, Double> currentData;
     private double currentFs;
@@ -156,7 +155,7 @@ public class App implements ItemListener {
     private void addComponentToPane(Container pane) {
 
         JPanel comboBoxPane = new JPanel();
-        String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10, SIGNAL11};
+        String[] comboBoxItems = {SIGNAL1, SIGNAL2, SIGNAL3, SIGNAL4, SIGNAL5, SIGNAL6, SIGNAL7, SIGNAL8, SIGNAL9, SIGNAL10, SIGNAL11, SIGNAL12};
         JComboBox<String> cb = new JComboBox<>(comboBoxItems);
         cb.setEditable(false);
         cb.addItemListener(this);
@@ -186,6 +185,8 @@ public class App implements ItemListener {
         cardsArray.add(createCard(NoiseImpulse.class, "A", "t1", "d", "p"));
         // ImpulseUnit
         cardsArray.add(createCard(ImpulseUnit.class, "A", "ns", "n1", "d"));
+        // S2
+        cardsArray.add(createCard(Signal2.class, "t1", "d"));
         // endregion
 
         // create the panel that contains the cards
@@ -215,6 +216,14 @@ public class App implements ItemListener {
         JButton zeroHold = new JButton("ZOH");
         JLabel binsLabel = new JLabel("Histogram bins: ");
         JTextField binsTextField = new JTextField("20", 3);
+        JButton correlation = new JButton("Correlation");
+        JButton convolution = new JButton("Convolution");
+        JButton filter = new JButton("Filter");
+        JButton antena = new JButton("Antena");
+        JButton kurier1 = new JButton("DFT");
+        JButton kurier2 = new JButton("FFT");
+        JButton wavelet = new JButton("Wavelet");
+        JButton complex = new JButton("Complex");
 
         save.addActionListener(e -> SaveDialog.showDialog(currentData, currentFs, currentName));
         load.addActionListener(e -> {
@@ -273,8 +282,57 @@ public class App implements ItemListener {
         quantize.addActionListener(e-> QuantizeDialog.showDialog(currentData, currentFs, currentName));
         sincRec.addActionListener(e-> SincRecDialog.showDialog(currentData, currentFs));
         zeroHold.addActionListener(e-> ZeroOrderHoldDialog.showDialog(currentData, currentFs, currentName));
-
         binsTextField.addActionListener(e -> Utils.BINS = Integer.parseInt(binsTextField.getText()));
+        correlation.addActionListener(e-> {
+            TreeMap<BigDecimal, Double> result = Correlation.correlate(data.get(0).data, data.get(1).data);
+            Utils.drawSignal("Correlation of " + data.get(0).name + " " + data.get(1).name, result);
+            Utils.drawHistogram("Correlation of " + data.get(0).name + " " + data.get(1).name, result);
+        });
+        convolution.addActionListener(e->{
+            TreeMap<BigDecimal, Double> result = Convolution.convolve(data.get(0).data, data.get(1).data);
+            Utils.drawSignal("Convolution of " + data.get(0).name + " " + data.get(1).name, result);
+            Utils.drawHistogram("Convolution of " + data.get(0).name + " " + data.get(1).name, result);
+        });
+        filter.addActionListener(e-> {
+            FilterDialog dialog = new FilterDialog(currentData);
+            dialog.pack();
+            dialog.setVisible(true);
+        });
+        antena.addActionListener(e->{
+            AntenaDialog dialog = new AntenaDialog();
+            dialog.pack();
+            dialog.setVisible(true);
+        });
+        kurier1.addActionListener(e->{
+            ArrayList<Complex> result = Fourier.discreteFourierTransform(currentData);
+            JOptionPane.showMessageDialog(null, "Time: " + Fourier.timeDFT + "ms");
+            try {
+                Serialization.Serialize(result, "DFT");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        kurier2.addActionListener(e->{
+            long startTime = System.currentTimeMillis();
+            ArrayList<Complex> result = Fourier.fastFourierTransform(currentData);
+            Fourier.timeFFT = System.currentTimeMillis() - startTime;
+            result.removeAll(Collections.singleton(null));
+            JOptionPane.showMessageDialog(null, "Time: " + Fourier.timeFFT + "ms");
+            try {
+                Serialization.Serialize(result, "FFT");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        wavelet.addActionListener(e->{
+            ArrayList<Complex> result = Wavelet.transfrom(currentData);
+            try {
+                Serialization.Serialize(result, "wavelet");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        complex.addActionListener(e-> ComplexDialog.showDialog());
 
         GroupLayout.SequentialGroup firstRowHoriz = layout.createSequentialGroup();
         GroupLayout.ParallelGroup firstRowVert = layout.createParallelGroup();
@@ -298,12 +356,30 @@ public class App implements ItemListener {
         thirdRowHoriz.addComponent(save);           thirdRowVert.addComponent(save);
         thirdRowHoriz.addComponent(load);           thirdRowVert.addComponent(load);
 
+        GroupLayout.SequentialGroup fourthRowHoriz = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup fourthRowVert = layout.createParallelGroup();
+        fourthRowHoriz.addComponent(correlation);   fourthRowVert.addComponent(correlation);
+        fourthRowHoriz.addComponent(convolution);   fourthRowVert.addComponent(convolution);
+        fourthRowHoriz.addComponent(filter);        fourthRowVert.addComponent(filter);
+        fourthRowHoriz.addComponent(antena);        fourthRowVert.addComponent(antena);
+
+        GroupLayout.SequentialGroup fifthRowHoriz = layout.createSequentialGroup();
+        GroupLayout.ParallelGroup fifthRowVert = layout.createParallelGroup();
+        fifthRowHoriz.addComponent(kurier1);   fifthRowVert.addComponent(kurier1);
+        fifthRowHoriz.addComponent(kurier2);   fifthRowVert.addComponent(kurier2);
+        fifthRowHoriz.addComponent(wavelet);   fifthRowVert.addComponent(wavelet);
+        fifthRowHoriz.addComponent(complex);   fifthRowVert.addComponent(complex);
+
         mainHoriz.addGroup(firstRowHoriz);
         mainHoriz.addGroup(secondRowHoriz);
         mainHoriz.addGroup(thirdRowHoriz);
+        mainHoriz.addGroup(fourthRowHoriz);
+        mainHoriz.addGroup(fifthRowHoriz);
         mainVert.addGroup(firstRowVert);
         mainVert.addGroup(secondRowVert);
         mainVert.addGroup(thirdRowVert);
+        mainVert.addGroup(fourthRowVert);
+        mainVert.addGroup(fifthRowVert);
         // endregion
 
         pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -388,7 +464,7 @@ public class App implements ItemListener {
 
         // display the window
         frame.pack();
-        frame.setSize(550, 275);
+        frame.setSize(550, 325);
         frame.setVisible(true);
     }
 
